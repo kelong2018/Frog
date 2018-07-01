@@ -76,7 +76,10 @@ namespace lobby {
             //广告加载后方可进入游戏          
             this.label_loading.visible = true;
             button.visible = false;
-            utl.ThirdSdk.bannerAD(true, ()=>{
+            utl.ThirdSdk.bannerAD(true, (json)=>{
+                console.log("======>>>>>> bannerAd back : " + json);
+                let val = JSON.parse(json);
+                console.log(val.ret);
                 this.label_loading.visible = false;
                 button.visible = true;
             })
@@ -94,7 +97,9 @@ namespace lobby {
         }
 
         beginGame() {
-            utl.ThirdSdk.bannerAD(false, ()=>{});
+            utl.ThirdSdk.bannerAD(false, (json)=>{
+                console.log("======>>>>>> bannerAd back : ", json);
+            });
             let game = new GameMainView(def.GAMEMODE.MODE1);
             Laya.stage.addChild(game);
             this.destroy();

@@ -13,8 +13,8 @@ namespace utl {
         public static bannerAD(show, callback) {
             if(Laya.Browser.onIOS) {
                 // // a、创建Test类
-                var BannerAdd = Laya.PlatformClass.createClass("ThirdSdk"); // 这个名字要与下面声明的OC的类名匹配 iOS不用包名
-                BannerAdd.callWithBack(callback, "bannerAdd", show);
+                var ThirdSdk = Laya.PlatformClass.createClass("ThirdSdk"); // 这个名字要与下面声明的OC的类名匹配 iOS不用包名
+                ThirdSdk.callWithBack(callback, "bannerAdd:", show);
             } else {
                 
             }
@@ -26,11 +26,15 @@ namespace utl {
          */
         public static videoAD(callback) {
             if(Laya.Browser.onIOS) {
-                var BannerAdd = Laya.PlatformClass.createClass("ThirdSdk"); // 这个名字要与下面声明的OC的类名匹配 iOS不用包名
-                BannerAdd.callWithBack(callback, "videoAdd");
+                var ThirdSdk = Laya.PlatformClass.createClass("ThirdSdk"); // 这个名字要与下面声明的OC的类名匹配 iOS不用包名
+                ThirdSdk.callWithBack(callback, "videoAdd");
             } else {
                 callback(false);
             }  
+        }
+
+        public static onVideoResult(json) {
+            console.log("onVideoResult ::: " + json);
         }
     }
 

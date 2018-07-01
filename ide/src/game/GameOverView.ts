@@ -89,12 +89,20 @@ namespace game {
 
         //广告
         adOperator() {
-            utl.ThirdSdk.videoAD((finish)=>{
-                if(finish) {                    
-                    this.event(this.ADEND);
-                    this.removeSelf();
-                    this.destroy();
+            utl.ThirdSdk.videoAD((json)=>{
+                console.log("======>>>>>> video back : " + json);
+                let val = JSON.parse(json);
+                console.log(val.ret);            
+                this.event(this.ADEND);
+                this.removeSelf();
+                this.destroy();
+                
+                // ret == true 表示广告播完并获得奖励
+                // ret == false 表示广告被关闭或者终止
+                if(val.ret) {    
+
                 }
+
             })
         }
 

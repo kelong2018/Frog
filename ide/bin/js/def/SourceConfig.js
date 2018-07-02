@@ -1,6 +1,6 @@
 var def;
 (function (def) {
-    var SourceConfig = (function () {
+    var SourceConfig = /** @class */ (function () {
         function SourceConfig() {
         }
         //大厅资源

@@ -15,7 +15,7 @@ var kelong;
         var Label = Laya.Label;
         var Event = Laya.Event;
         var Box = Laya.Box;
-        var KButtonGO = (function (_super) {
+        var KButtonGO = /** @class */ (function (_super) {
             __extends(KButtonGO, _super);
             function KButtonGO(txt) {
                 var _this = _super.call(this) || this;

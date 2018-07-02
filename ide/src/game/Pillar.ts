@@ -9,9 +9,9 @@ namespace game {
      */
     export class Pillar extends Sprite {
         static PILLARTAG = "pillar";
-        //1-柱子，2-没有柱子，3-柱子上有刺
+        //1-柱子，2-没有柱子，3-柱子上有刺，4-柱子掉落
         static BEGINARRAY = [1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 3, 1, 1, 2];
-        static NEXTARRAY = [[1, 2, 1, 3, 1], [1, 3, 1, 1, 2], [1, 2, 1, 3, 1], [1, 3, 1, 2, 1]];
+        static NEXTARRAY = [[1, 2, 1, 3, 1], [1, 3, 1, 1, 2], [1, 2, 1, 3, 1], [1, 3, 1, 2, 1], [1, 4, 1, 2, 1]];
         haveTrap = false;
         trap;//: Laya.Image; //陷阱
         constructor() {
@@ -54,15 +54,17 @@ namespace game {
                     idx: 0
                 };
             } else {
-                let idx = Math.floor(Math.random() * Pillar.NEXTARRAY.length);
+                let ran = Math.random();
+                let idx = Math.floor(ran * Pillar.NEXTARRAY.length);
+                console.log("pillar", idx, ran);
                 if (idx == Pillar.NEXTARRAY.length) {
                     idx--;
                 }
-                if (idx == idx) {    //跟上一组一样了
-                    idx = idx == Pillar.NEXTARRAY.length - 1 ? 0 : idx + 1;
+                if (idx == idxO) {    //跟上一组一样了
+                    idx = idxO == Pillar.NEXTARRAY.length - 1 ? 0 : idx + 1;
                 }
                 return {
-                    array: Pillar.NEXTARRAY[idx],
+                    array: [1, 4, 1, 2, 1],//Pillar.NEXTARRAY[idx],
                     idx: idx
                 }
             }

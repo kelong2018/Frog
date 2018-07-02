@@ -13,7 +13,7 @@ var game;
     var Event = Laya.Event;
     var KColorButton = kelong.ui.KColorButton;
     var Browser = Laya.Browser;
-    var GameOverView = (function (_super) {
+    var GameOverView = /** @class */ (function (_super) {
         __extends(GameOverView, _super);
         function GameOverView(socre) {
             var _this = _super.call(this) || this;

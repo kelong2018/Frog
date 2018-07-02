@@ -12,7 +12,7 @@ var game;
 (function (game) {
     var Sprite = Laya.Sprite;
     var Image = Laya.Image;
-    var WaterView = (function (_super) {
+    var WaterView = /** @class */ (function (_super) {
         __extends(WaterView, _super);
         function WaterView() {
             var _this = _super.call(this) || this;

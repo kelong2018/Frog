@@ -12,7 +12,7 @@ var game;
 (function (game) {
     var Sprite = Laya.Sprite;
     var Image = Laya.Image;
-    var RepeatImageView = (function (_super) {
+    var RepeatImageView = /** @class */ (function (_super) {
         __extends(RepeatImageView, _super);
         function RepeatImageView(pic) {
             var _this = _super.call(this) || this;

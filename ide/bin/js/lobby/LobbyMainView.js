@@ -16,7 +16,7 @@ var lobby;
     var Image = Laya.Image;
     var Label = Laya.Label;
     var Event = Laya.Event;
-    var LobbyMainView = (function (_super) {
+    var LobbyMainView = /** @class */ (function (_super) {
         __extends(LobbyMainView, _super);
         function LobbyMainView() {
             var _this = _super.call(this) || this;

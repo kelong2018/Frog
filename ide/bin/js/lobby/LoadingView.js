@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
 var lobby;
 (function (lobby_1) {
     var ViewColor = kelong.ui.ViewColor;
-    var LoadingView = (function (_super) {
+    var LoadingView = /** @class */ (function (_super) {
         __extends(LoadingView, _super);
         function LoadingView() {
             var _this = _super.call(this) || this;

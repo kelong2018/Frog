@@ -14,7 +14,7 @@ var kelong;
     (function (ui) {
         var Label = Laya.Label;
         var Event = Laya.Event;
-        var KLabelButton = (function (_super) {
+        var KLabelButton = /** @class */ (function (_super) {
             __extends(KLabelButton, _super);
             function KLabelButton(txt) {
                 var _this = _super.call(this) || this;

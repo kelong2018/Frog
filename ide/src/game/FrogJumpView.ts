@@ -17,10 +17,16 @@ namespace game {
             jump_small_blast: "jump_small_blast",
             jump_small_fall: "jump_small_fall",
             jump_big_blast: "jump_big_blast",
-            jump_big_fall: "jump_big_fall"
+            jump_big_fall: "jump_big_fall",
+            jump_up: "jump_up",
+            jump_up_blast: "jup_up_blast",
         }
 
         inJump:boolean = false;
+        falling: boolean = false;
+        actionInterval = 0;
+        speedDif = 0;
+        initYPos = 0;
 
         constructor() {
             super();
@@ -48,16 +54,26 @@ namespace game {
             });
             this.jump_big_blast.on(Laya.Event.COMPLETE, this, () => {
                 this.event(FrogJumpView.ACTIONEND, FrogJumpView.EVENT_DIE);
-            });            
+            });
             this.jump_big_fall.on(Laya.Event.COMPLETE, this, () => {
                 this.event(FrogJumpView.ACTIONEND, FrogJumpView.EVENT_DIE);
             });
-            
+            this.jump_up.on(Laya.Event.COMPLETE, this, () => {
+                this.event(FrogJumpView.ACTIONEND, FrogJumpView.EVENT_STOP);
+                this.playAction(FrogJumpView.ACTIONS.stand);
+                this.x += GameConfig.SMALLSTEP;
+            });            
+            this.jump_up_blast.on(Laya.Event.COMPLETE, this, () => {
+                this.event(FrogJumpView.ACTIONEND, FrogJumpView.EVENT_DIE);
+            });
+            this.actionInterval = this.jump_small.interval;
+            console.log("this.actionInterval", this.actionInterval);
         }
 
         //设置初始位置
         initPos(x, y) {
             this.pos(x, y);
+            this.initYPos = y;
         }
 
         getRealPosX() {
@@ -71,6 +87,7 @@ namespace game {
         playAction(actionName) {
             this.inJump = true;
             if (actionName == FrogJumpView.ACTIONS.stand) {
+                this.y = this.initYPos
                 this.jump_stand.play(0, false);
                 this.inJump = false;
             } else if (actionName == FrogJumpView.ACTIONS.jump_small) {
@@ -90,7 +107,38 @@ namespace game {
                 this.jump_big_blast.play(0, false);
             } else if (actionName == FrogJumpView.ACTIONS.jump_big_fall) {
                 this.jump_big_fall.play(0, false);
+            } else if (actionName == FrogJumpView.ACTIONS.jump_up) {
+                this.jump_up.play(0, false);
+            } else if (actionName == FrogJumpView.ACTIONS.jump_up_blast) {
+                this.jump_up_blast.play(0, false);
             }
+        }
+
+        checkSpeed(speed) {
+            let dif = speed - GameConfig.SPEED;
+            let difNum = Math.floor(dif / 0.5);
+            if(this.speedDif != difNum) {
+                this.setInterval(this.actionInterval - 5);
+                this.speedDif = difNum;
+            }
+            
+        }
+
+        setInterval(interval) {
+            if(interval == this.actionInterval) {
+                return;
+            }
+            console.log("this.actionIntervalxxx", this.actionInterval);
+            this.actionInterval = interval;
+            this.jump_small.interval = interval;
+            this.jump_big.interval = interval;
+            this.stand_blast.interval = interval;
+            this.jump_small_blast.interval = interval;
+            this.jump_small_fall.interval = interval;
+            this.jump_big_blast.interval = interval;
+            this.jump_big_fall.interval = interval;
+            this.jump_up.interval = interval;
+            this.jump_up_blast.interval = interval;
         }
     }
 }

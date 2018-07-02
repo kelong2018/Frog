@@ -1,6 +1,6 @@
 var utl;
 (function (utl) {
-    var ThirdSdk = (function () {
+    var ThirdSdk = /** @class */ (function () {
         function ThirdSdk() {
         }
         //文档：https://ldc.layabox.com/doc/?nav=zh-as-7-2-2

@@ -16,7 +16,7 @@ var kelong;
         var Event = Laya.Event;
         var Box = Laya.Box;
         var Sprite = Laya.Sprite;
-        var KColorButton = (function (_super) {
+        var KColorButton = /** @class */ (function (_super) {
             __extends(KColorButton, _super);
             function KColorButton(txt) {
                 var _this = _super.call(this) || this;

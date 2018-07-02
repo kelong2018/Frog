@@ -15,7 +15,7 @@ var game;
     /**
      * 青蛙
      */
-    var Pillar = (function (_super) {
+    var Pillar = /** @class */ (function (_super) {
         __extends(Pillar, _super);
         function Pillar() {
             var _this = _super.call(this) || this;
@@ -56,23 +56,25 @@ var game;
                 };
             }
             else {
-                var idx = Math.floor(Math.random() * Pillar.NEXTARRAY.length);
+                var ran = Math.random();
+                var idx = Math.floor(ran * Pillar.NEXTARRAY.length);
+                console.log("pillar", idx, ran);
                 if (idx == Pillar.NEXTARRAY.length) {
                     idx--;
                 }
-                if (idx == idx) {
-                    idx = idx == Pillar.NEXTARRAY.length - 1 ? 0 : idx + 1;
+                if (idx == idxO) { //跟上一组一样了
+                    idx = idxO == Pillar.NEXTARRAY.length - 1 ? 0 : idx + 1;
                 }
                 return {
-                    array: Pillar.NEXTARRAY[idx],
+                    array: [1, 4, 1, 2, 1],
                     idx: idx
                 };
             }
         };
         Pillar.PILLARTAG = "pillar";
-        //1-柱子，2-没有柱子，3-柱子上有刺
+        //1-柱子，2-没有柱子，3-柱子上有刺，4-柱子掉落
         Pillar.BEGINARRAY = [1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 3, 1, 1, 2];
-        Pillar.NEXTARRAY = [[1, 2, 1, 3, 1], [1, 3, 1, 1, 2], [1, 2, 1, 3, 1], [1, 3, 1, 2, 1]];
+        Pillar.NEXTARRAY = [[1, 2, 1, 3, 1], [1, 3, 1, 1, 2], [1, 2, 1, 3, 1], [1, 3, 1, 2, 1], [1, 4, 1, 2, 1]];
         return Pillar;
     }(Sprite));
     game.Pillar = Pillar;

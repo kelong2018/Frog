@@ -15,7 +15,7 @@ var kelong;
         var Event = Laya.Event;
         // import Box = laya.editerUI.View;
         var View = laya.ui.View;
-        var ViewColor = (function (_super) {
+        var ViewColor = /** @class */ (function (_super) {
             __extends(ViewColor, _super);
             function ViewColor() {
                 var _this = _super.call(this) || this;

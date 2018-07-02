@@ -1,6 +1,6 @@
 var def;
 (function (def) {
-    var GameConfig = (function () {
+    var GameConfig = /** @class */ (function () {
         function GameConfig() {
         }
         GameConfig.SPEED = 3;

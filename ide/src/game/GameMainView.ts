@@ -38,7 +38,7 @@ namespace game {
         //远景
         buildingView: RepeatImageView;
         //云层
-        // cloudsView: CloudsView;
+        cloudsView: RepeatImageView;
         //水
         waterView: WaterView;
         label_jump: ui.comp.LabelScaleAniUI;
@@ -58,8 +58,8 @@ namespace game {
             // this.start();
             this.box_control.on(Laya.Event.MOUSE_DOWN, this, this.onMouseDown);
             this.box_control.on(Laya.Event.MOUSE_UP, this, this.onMouseUp);
-            this.img_clound.on(Laya.Event.DOUBLE_CLICK, this, ()=>{
-                this.play_self = !this.play_self;
+            this.label_score.on(Laya.Event.DOUBLE_CLICK, this, ()=>{
+                // this.play_self = !this.play_self; //自己跳
             })
             // this.label_control.on("click", this, this.gameControl);
             // this.on(Event.RESIZE, this, () => {
@@ -94,19 +94,11 @@ namespace game {
                 if (difX < 100) {
                     return;
                 }
-                if (this.gameStatus != 1) {
-                    this.start();
-                }
-                this.stepBig = false;
-                this.gameSpeed += 0.04;
                 this.jumpSmall();
             }
             if (angle < -Math.PI / 3 && angle > -Math.PI * 2 / 3) { //上滑动
                 if (difY > -100) {
                     return;
-                }
-                if (this.gameStatus != 1) {
-                    this.start();
                 }
                 this.stepBig = true;
                 this.jumpBig();
@@ -114,10 +106,7 @@ namespace game {
         }
 
         jumpSmall() {
-            this.score++;
-            this.label_score.text = "分数：" + this.score;
-            this.gameSpeed += 0.04;
-            this.frog.checkSpeed(this.gameSpeed);
+            this.setGameSpeed()
 
             let nowItem = this.roadArray[this.roadIndex]
             if (nowItem.tag == 4) {
@@ -148,20 +137,17 @@ namespace game {
         }
 
         jumpBig() {
-            this.score++;
-            this.label_score.text = "分数：" + this.score;
-            this.gameSpeed += 0.04;
-            this.frog.checkSpeed(this.gameSpeed);
+            this.setGameSpeed()
 
             let nowItem = this.roadArray[this.roadIndex]
             if (nowItem.tag == 4) {
-                // if (Math.random() < 0.5) { //一般概率炸
-                //     this.jumpToBlast = true;
-                //     this.frog.playAction(FrogJumpView.ACTIONS.jump_up_blast);
-                // } else {
+                if (Math.random() < 0.2 && !this.play_self) { //概率炸
+                    this.jumpToBlast = true;
+                    this.frog.playAction(FrogJumpView.ACTIONS.jump_up_blast);
+                } else {
                     this.roadIndex += 1
                     this.frog.playAction(FrogJumpView.ACTIONS.jump_up);
-                // }
+                }
                 return;
             }
             this.roadIndex += 2
@@ -186,15 +172,26 @@ namespace game {
             }
         }
 
+        setGameSpeed() {
+            if(this.label_jump.visible == true) { //提示
+                this.label_jump.visible = false;
+                this.label_jump.ani_play.stop();
+            }
+            this.score++;
+            this.label_score.text = "分数: " + this.score;
+            if(this.gameSpeed < 6) {
+                this.gameSpeed += 0.04;
+                this.frog.checkSpeed(this.gameSpeed);
+            }
+        }
+
         //开始
         start() {
             this.gameStatus = 1;
             // this.visible = true;
             // this.label_jump.pos(this.frog.x , this.frog.y - 50);
-            utl.MusicSoundTool.playMusic(def.MusicConfig.CommonMusic.game_bg);
-            this.label_jump.visible = false;
-            this.label_jump.ani_play.stop();
             Laya.timer.frameLoop(1, this, this.onLoop);
+            utl.MusicSoundTool.playMusic(def.MusicConfig.CommonMusic.game_bg);
         }
 
         //暂停
@@ -272,6 +269,10 @@ namespace game {
             //建筑景物
             this.buildingView = new RepeatImageView("frog/yuanjingcen.png");
             this.sp_map.addChild(this.buildingView);
+            //云层
+            this.cloudsView = new RepeatImageView("frog/yun.png");
+            this.sp_map.addChild(this.cloudsView);
+            this.cloudsView.y = 0;
             //水
             this.waterView = new WaterView;
             this.waterView.y = Laya.stage.height - this.waterView.picHeight;
@@ -307,7 +308,7 @@ namespace game {
             this.frog.on(FrogJumpView.ACTIONEND, this, this.frogActionOver);
             this.sp_map.addChild(this.frog);
             this.lastXpos = this.BEGINXPOS;
-            this.label_score.text = "分数：" + this.score;
+            this.label_score.text = "分数: " + this.score;
             this.gameSpeed = GameConfig.SPEED;
             this.frog.initPos(this.lastXpos, this.pillarYPos);
             this.frog.playAction(FrogJumpView.ACTIONS.stand);
@@ -383,10 +384,10 @@ namespace game {
             //布景移动
             this.waterView.run(this.gameSpeed + 0.1);
             this.buildingView.run(this.gameSpeed - 1);
+            this.cloudsView.run(this.gameSpeed - 2);
             this.bgView.run(this.gameSpeed - 1.5);
 
             this.playSelf();
-
             this.frog.x -= this.gameSpeed;
 
             let frogX = this.frog.getRealPosX();
@@ -430,6 +431,9 @@ namespace game {
         //青蛙动作结束
         frogActionOver(eventName) {
             if (eventName == FrogJumpView.EVENT_STOP) {
+                if (this.gameStatus != 1) {
+                    this.start();
+                }
                 let item = this.roadArray[this.roadIndex]
                 if (item.tag == 4) {
                     let posY = this.pillarYPos;
@@ -438,7 +442,6 @@ namespace game {
                         this.frog.falling = false;
                     })
                     );
-                    // item.pillar.
                 }
             } else if (eventName == FrogJumpView.EVENT_DIE) {
                 this.frog.visible = false;

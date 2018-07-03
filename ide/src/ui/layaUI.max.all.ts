@@ -11,9 +11,7 @@ module ui.comp {
         
             super.createChildren();
             this.createView(ui.comp.LabelScaleAniUI.uiView);
-
         }
-
     }
 }
 
@@ -27,9 +25,7 @@ module ui.game {
         
             super.createChildren();
             this.createView(ui.game.FrogJumpUI.uiView);
-
         }
-
     }
 }
 
@@ -53,9 +49,7 @@ module ui.game {
         
             super.createChildren();
             this.createView(ui.game.FrogViewUI.uiView);
-
         }
-
     }
 }
 
@@ -74,23 +68,19 @@ module ui.game {
 		public sp_white:Laya.Sprite;
 		public box_labels:Laya.Box;
 
-        public static  uiView:any ={"type":"View","props":{},"child":[{"type":"Box","props":{"var":"box_control","top":0,"right":0,"left":0,"bottom":0}},{"type":"Sprite","props":{"var":"sp_map"}},{"type":"Image","props":{"var":"img_clound","skin":"frog/yun.png"}},{"type":"Sprite","props":{"y":0,"x":0,"var":"sp_water"}},{"type":"Label","props":{"visible":false,"var":"label_control","top":50,"text":"暂停","left":60,"fontSize":46,"font":"黑体","color":"#ffffff","bold":true}},{"type":"Label","props":{"visible":false,"var":"label_time","top":200,"text":"3","fontSize":50,"color":"#ffffff","centerX":0,"bold":true}},{"type":"Label","props":{"var":"label_score","top":50,"text":"分数：0","left":60,"fontSize":46,"font":"黑体","color":"#3370ff","bold":true,"align":"left"}},{"type":"Box","props":{"var":"box_tips","top":0,"right":0,"left":0,"bottom":0},"child":[{"type":"Sprite","props":{"var":"sp_tips","alpha":0.5}},{"type":"Sprite","props":{"y":0,"x":0,"var":"sp_white","alpha":0},"compId":24,"child":[{"type":"Rect","props":{"y":0,"x":0,"width":642,"lineWidth":1,"height":961,"fillColor":"#ffffff"}}]},{"type":"Box","props":{"var":"box_labels","top":0,"right":0,"left":0,"bottom":0},"child":[{"type":"Label","props":{"y":-115,"x":-76,"text":"滑动操作","fontSize":50,"font":"黑体","color":"#ffffff","centerY":-200,"centerX":0,"bold":true}},{"type":"Label","props":{"y":-115,"x":-76,"text":"向右小跳","fontSize":50,"font":"黑体","color":"#ffffff","centerY":-100,"centerX":0,"bold":true}},{"type":"Label","props":{"y":-115,"x":-76,"text":"向上大跳","fontSize":50,"font":"黑体","color":"#ffffff","centerY":0,"centerX":0,"bold":true}},{"type":"Label","props":{"y":-115,"x":-76,"text":"非常简单","fontSize":50,"font":"黑体","color":"#ffffff","centerY":100,"centerX":0,"bold":true}},{"type":"Label","props":{"y":-115,"x":-76,"text":"点击屏幕开始游戏","fontSize":42,"font":"黑体","color":"#ffffff","centerX":0,"bottom":140}}]}]}],"animations":[{"nodes":[{"target":24,"keyframes":{"alpha":[{"value":0.5,"tweenMethod":"linearNone","tween":true,"target":24,"key":"alpha","index":0},{"value":0.7,"tweenMethod":"linearNone","tween":true,"target":24,"key":"alpha","index":1},{"value":0.2,"tweenMethod":"linearNone","tween":true,"target":24,"key":"alpha","index":2},{"value":0.6,"tweenMethod":"linearNone","tween":true,"target":24,"key":"alpha","index":3},{"value":0,"tweenMethod":"linearNone","tween":true,"target":24,"key":"alpha","index":4}]}}],"name":"ani_go","id":1,"frameRate":24,"action":0},{"nodes":[],"name":"ani_play","id":2,"frameRate":24,"action":0}]};
+        public static  uiView:any ={"type":"View","props":{},"child":[{"type":"Box","props":{"var":"box_control","top":0,"right":0,"left":0,"bottom":0}},{"type":"Sprite","props":{"var":"sp_map"}},{"type":"Image","props":{"visible":false,"var":"img_clound","skin":"frog/yun.png"}},{"type":"Sprite","props":{"y":0,"x":0,"var":"sp_water"}},{"type":"Label","props":{"visible":false,"var":"label_control","top":50,"text":"暂停","left":60,"fontSize":46,"font":"黑体","color":"#ffffff","bold":true}},{"type":"Label","props":{"visible":false,"var":"label_time","top":200,"text":"3","fontSize":50,"color":"#ffffff","centerX":0,"bold":true}},{"type":"Image","props":{"width":220,"top":60,"skin":"frog/rectBg.png","left":20,"height":60,"sizeGrid":"30,30,30,30"},"child":[{"type":"Label","props":{"var":"label_score","text":"分数: 0","left":16,"fontSize":36,"font":"黑体","color":"#ffffff","centerY":0,"bold":true,"align":"left"}}]},{"type":"Box","props":{"var":"box_tips","top":0,"right":0,"left":0,"bottom":0},"child":[{"type":"Sprite","props":{"var":"sp_tips","alpha":0.5}},{"type":"Sprite","props":{"y":0,"x":0,"var":"sp_white","alpha":0},"compId":24,"child":[{"type":"Rect","props":{"y":0,"x":0,"width":642,"lineWidth":1,"height":961,"fillColor":"#ffffff"}}]},{"type":"Box","props":{"var":"box_labels","top":0,"right":0,"left":0,"bottom":0},"child":[{"type":"Label","props":{"y":-115,"x":-76,"text":"滑动操作","fontSize":50,"font":"黑体","color":"#ffffff","centerY":-200,"centerX":0,"bold":true}},{"type":"Label","props":{"y":-115,"x":-76,"text":"向右小跳","fontSize":50,"font":"黑体","color":"#ffffff","centerY":-100,"centerX":0,"bold":true}},{"type":"Label","props":{"y":-115,"x":-76,"text":"向上大跳","fontSize":50,"font":"黑体","color":"#ffffff","centerY":0,"centerX":0,"bold":true}},{"type":"Label","props":{"y":-115,"x":-76,"text":"非常简单","fontSize":50,"font":"黑体","color":"#ffffff","centerY":100,"centerX":0,"bold":true}},{"type":"Label","props":{"y":-115,"x":-76,"text":"点击屏幕开始游戏","fontSize":42,"font":"黑体","color":"#ffffff","centerX":0,"bottom":140}}]}]}],"animations":[{"nodes":[{"target":24,"keyframes":{"alpha":[{"value":0.5,"tweenMethod":"linearNone","tween":true,"target":24,"key":"alpha","index":0},{"value":0.7,"tweenMethod":"linearNone","tween":true,"target":24,"key":"alpha","index":1},{"value":0.2,"tweenMethod":"linearNone","tween":true,"target":24,"key":"alpha","index":2},{"value":0.6,"tweenMethod":"linearNone","tween":true,"target":24,"key":"alpha","index":3},{"value":0,"tweenMethod":"linearNone","tween":true,"target":24,"key":"alpha","index":4}]}}],"name":"ani_go","id":1,"frameRate":24,"action":0},{"nodes":[],"name":"ani_play","id":2,"frameRate":24,"action":0}]};
         constructor(){ super()}
         createChildren():void {
         
             super.createChildren();
             this.createView(ui.game.GameMainUI.uiView);
-
         }
-
     }
 }
 
 module ui.game {
     export class GameOverUI extends View {
 		public sp_bg:Laya.Sprite;
-		public label_get:Laya.Label;
-		public label_score:Laya.Label;
 		public box_list:Laya.Box;
 		public box_title:Laya.Box;
 		public box_listBg:Laya.Box;
@@ -102,16 +92,22 @@ module ui.game {
 		public label_Myscore:Laya.Label;
 		public sp_rect:Laya.Sprite;
 		public img_close:Laya.Image;
+		public btn_close:Laya.Image;
+		public label_get:Laya.Label;
+		public label_score:Laya.Label;
+		public label_high:Laya.Label;
+		public img_new:Laya.Image;
+		public btn_agin:Laya.Image;
+		public btn_ad:Laya.Image;
+		public btn_backMain:Laya.Image;
 
-        public static  uiView:any ={"type":"View","props":{"y":0,"centerY":0,"centerX":0},"child":[{"type":"Sprite","props":{"var":"sp_bg"}},{"type":"Label","props":{"var":"label_get","text":"得分：","left":28,"fontSize":110,"font":"黑体","color":"#ffffff","centerY":-240,"bold":true}},{"type":"Label","props":{"width":157,"var":"label_score","text":"0","left":350,"height":100,"fontSize":100,"font":"黑体","color":"#ffffff","centerY":-240,"align":"left"}},{"type":"Box","props":{"width":520,"visible":false,"var":"box_list","height":860,"centerY":18,"centerX":0},"child":[{"type":"Box","props":{"width":520,"var":"box_title","top":0,"height":100,"centerX":0},"child":[{"type":"Label","props":{"text":"排行榜","fontSize":46,"font":"黑体","color":"#ffffff","centerY":0,"centerX":0,"bold":true}}]},{"type":"Box","props":{"width":520,"var":"box_listBg","top":100,"height":760,"centerX":0},"child":[{"type":"Label","props":{"top":9,"text":"玩家昵称","fontSize":26,"font":"黑体","color":"#5da679","centerX":-12,"bold":true}},{"type":"Label","props":{"top":9,"text":"积分","right":78,"fontSize":26,"font":"黑体","color":"#5da679","bold":true}},{"type":"List","props":{"x":40,"width":460,"visible":true,"var":"list","top":36,"spaceY":20,"centerX":0,"bottom":110},"child":[{"type":"Box","props":{"y":0,"x":0,"width":460,"renderType":"render","height":80},"child":[{"type":"Image","props":{"skin":"frog/rank1.png","name":"rank_bg","left":20,"bottom":-12}},{"type":"Label","props":{"text":"1","name":"label_rank","left":40,"fontSize":40,"font":"黑体","color":"#ffffff","bottom":0}},{"type":"Image","props":{"width":70,"skin":"frog/tiao_01.png","name":"img_head","left":100,"height":70,"bottom":0}},{"type":"Label","props":{"text":"label","name":"label_name","left":182,"fontSize":30,"font":"黑体","color":"#ffffff","bottom":6}},{"type":"Label","props":{"text":"100","right":40,"name":"label_score","fontSize":30,"font":"黑体","color":"#ffffff","bottom":6}}]}]},{"type":"Box","props":{"y":680,"x":30,"width":460,"var":"box_my","renderType":"render","height":100,"centerX":0,"bottom":0},"child":[{"type":"Label","props":{"var":"label_Myrank","text":"1","left":40,"fontSize":40,"color":"#ffffff","bottom":20}},{"type":"Image","props":{"width":70,"var":"img_Myhead","skin":"frog/tiao_01.png","left":100,"height":70,"bottom":20}},{"type":"Label","props":{"var":"label_Myname","text":"label","left":182,"fontSize":30,"color":"#ffffff","bottom":26}},{"type":"Label","props":{"var":"label_Myscore","text":"100","right":40,"fontSize":30,"color":"#ffffff","bottom":26}}]}]},{"type":"Sprite","props":{"y":0,"x":0,"var":"sp_rect"}},{"type":"Image","props":{"var":"img_close","top":-20,"skin":"frog/closeButton.png","right":-20}}]}]};
+        public static  uiView:any ={"type":"View","props":{"y":0,"centerY":0,"centerX":0},"child":[{"type":"Sprite","props":{"var":"sp_bg"}},{"type":"Box","props":{"width":520,"visible":false,"var":"box_list","height":860,"centerY":18,"centerX":0},"child":[{"type":"Box","props":{"width":520,"var":"box_title","top":0,"height":100,"centerX":0},"child":[{"type":"Label","props":{"text":"排行榜","fontSize":46,"font":"黑体","color":"#ffffff","centerY":0,"centerX":0,"bold":true}}]},{"type":"Box","props":{"width":520,"var":"box_listBg","top":100,"height":760,"centerX":0},"child":[{"type":"Label","props":{"top":9,"text":"玩家昵称","fontSize":26,"font":"黑体","color":"#5da679","centerX":-12,"bold":true}},{"type":"Label","props":{"top":9,"text":"积分","right":78,"fontSize":26,"font":"黑体","color":"#5da679","bold":true}},{"type":"List","props":{"x":40,"width":460,"visible":true,"var":"list","top":36,"spaceY":20,"centerX":0,"bottom":110},"child":[{"type":"Box","props":{"y":0,"x":0,"width":460,"renderType":"render","height":80},"child":[{"type":"Image","props":{"skin":"frog/rank1.png","name":"rank_bg","left":20,"bottom":-12}},{"type":"Label","props":{"text":"1","name":"label_rank","left":40,"fontSize":40,"font":"黑体","color":"#ffffff","bottom":0}},{"type":"Image","props":{"width":70,"skin":"frog/tiao_01.png","name":"img_head","left":100,"height":70,"bottom":0}},{"type":"Label","props":{"text":"label","name":"label_name","left":182,"fontSize":30,"font":"黑体","color":"#ffffff","bottom":6}},{"type":"Label","props":{"text":"100","right":40,"name":"label_score","fontSize":30,"font":"黑体","color":"#ffffff","bottom":6}}]}]},{"type":"Box","props":{"y":680,"x":30,"width":460,"var":"box_my","renderType":"render","height":100,"centerX":0,"bottom":0},"child":[{"type":"Label","props":{"var":"label_Myrank","text":"1","left":40,"fontSize":40,"color":"#ffffff","bottom":20}},{"type":"Image","props":{"width":70,"var":"img_Myhead","skin":"frog/tiao_01.png","left":100,"height":70,"bottom":20}},{"type":"Label","props":{"var":"label_Myname","text":"label","left":182,"fontSize":30,"color":"#ffffff","bottom":26}},{"type":"Label","props":{"var":"label_Myscore","text":"100","right":40,"fontSize":30,"color":"#ffffff","bottom":26}}]}]},{"type":"Sprite","props":{"y":0,"x":0,"var":"sp_rect"}},{"type":"Image","props":{"var":"img_close","top":-20,"skin":"frog/closeButton.png","right":-20}}]},{"type":"Box","props":{"width":431,"top":80,"height":651,"centerX":0},"child":[{"type":"Image","props":{"width":431,"skin":"frog/overBg.png","height":651},"child":[{"type":"Image","props":{"visible":false,"var":"btn_close","top":-20,"skin":"frog/closeButton.png","right":-20}},{"type":"Label","props":{"width":198,"var":"label_get","top":54,"text":"得分","left":20,"height":78,"fontSize":78,"font":"黑体","color":"#ffffff","bold":true}},{"type":"Label","props":{"var":"label_score","top":64,"text":"0","left":260,"fontSize":60,"font":"黑体","color":"#ffffff","align":"left"}},{"type":"Label","props":{"width":198,"top":200,"text":"历史最高","left":20,"fontSize":50,"font":"黑体","color":"#ffffff","bold":true}},{"type":"Label","props":{"var":"label_high","top":195,"text":"0","left":260,"fontSize":60,"font":"黑体","color":"#ffffff","align":"left"}},{"type":"Image","props":{"y":166,"x":229,"visible":false,"var":"img_new","skin":"frog/new.png"}},{"type":"Image","props":{"var":"btn_agin","skin":"frog/imgAgin.png","centerY":167,"centerX":0}},{"type":"Image","props":{"var":"btn_ad","skin":"frog/adAgin.png","centerY":30,"centerX":0}},{"type":"Image","props":{"visible":false,"var":"btn_backMain","skin":"frog/backMain.png","centerX":0,"bottom":18}}]}]}]};
         constructor(){ super()}
         createChildren():void {
         
             super.createChildren();
             this.createView(ui.game.GameOverUI.uiView);
-
         }
-
     }
 }
 
@@ -124,8 +120,6 @@ module ui.lobby {
         
             super.createChildren();
             this.createView(ui.lobby.LobbyMainUI.uiView);
-
         }
-
     }
 }

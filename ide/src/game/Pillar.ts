@@ -21,11 +21,11 @@ namespace game {
 
             this.trap = new Sprite();
             let ttrap: Laya.Texture = Laya.loader.getRes("frog/xianjing.png");
-            let trapWidth = GameConfig.PILLARWIDTH - 10
+            let trapWidth = GameConfig.PILLARWIDTH - 26
             let ttH = trapWidth * 0.31;
             this.trap.graphics.drawTexture(ttrap, 0, 0, trapWidth, ttH);
             this.trap.size(GameConfig.PILLARWIDTH, ttH);
-            this.trap.pos(5, -ttH + 25);
+            this.trap.pos(13, -ttH + 25);
             this.addChildren(this.trap);
 
             // this.trap = new Image("frog/xianjing.png")
@@ -56,7 +56,6 @@ namespace game {
             } else {
                 let ran = Math.random();
                 let idx = Math.floor(ran * Pillar.NEXTARRAY.length);
-                console.log("pillar", idx, ran);
                 if (idx == Pillar.NEXTARRAY.length) {
                     idx--;
                 }
@@ -64,7 +63,7 @@ namespace game {
                     idx = idxO == Pillar.NEXTARRAY.length - 1 ? 0 : idx + 1;
                 }
                 return {
-                    array: [1, 4, 1, 2, 1],//Pillar.NEXTARRAY[idx],
+                    array: Pillar.NEXTARRAY[idx],
                     idx: idx
                 }
             }

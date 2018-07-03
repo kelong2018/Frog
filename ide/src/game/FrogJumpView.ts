@@ -67,7 +67,6 @@ namespace game {
                 this.event(FrogJumpView.ACTIONEND, FrogJumpView.EVENT_DIE);
             });
             this.actionInterval = this.jump_small.interval;
-            console.log("this.actionInterval", this.actionInterval);
         }
 
         //设置初始位置
@@ -118,17 +117,16 @@ namespace game {
             let dif = speed - GameConfig.SPEED;
             let difNum = Math.floor(dif / 0.5);
             if(this.speedDif != difNum) {
-                this.setInterval(this.actionInterval - 5);
+                this.setInterval(this.actionInterval - 5, speed);
                 this.speedDif = difNum;
             }
-            
         }
 
-        setInterval(interval) {
+        setInterval(interval, speed) {
             if(interval == this.actionInterval) {
                 return;
             }
-            console.log("this.actionIntervalxxx", this.actionInterval);
+            //console.log("this.actionIntervalNNxxxxxx", interval, speed);
             this.actionInterval = interval;
             this.jump_small.interval = interval;
             this.jump_big.interval = interval;

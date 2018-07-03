@@ -44,8 +44,8 @@ var game;
             // this.start();
             _this.box_control.on(Laya.Event.MOUSE_DOWN, _this, _this.onMouseDown);
             _this.box_control.on(Laya.Event.MOUSE_UP, _this, _this.onMouseUp);
-            _this.img_clound.on(Laya.Event.DOUBLE_CLICK, _this, function () {
-                _this.play_self = !_this.play_self;
+            _this.label_score.on(Laya.Event.DOUBLE_CLICK, _this, function () {
+                // this.play_self = !this.play_self; //自己跳
             });
             return _this;
             // this.label_control.on("click", this, this.gameControl);
@@ -79,29 +79,18 @@ var game;
                 if (difX < 100) {
                     return;
                 }
-                if (this.gameStatus != 1) {
-                    this.start();
-                }
-                this.stepBig = false;
-                this.gameSpeed += 0.04;
                 this.jumpSmall();
             }
             if (angle < -Math.PI / 3 && angle > -Math.PI * 2 / 3) { //上滑动
                 if (difY > -100) {
                     return;
                 }
-                if (this.gameStatus != 1) {
-                    this.start();
-                }
                 this.stepBig = true;
                 this.jumpBig();
             }
         };
         GameMainView.prototype.jumpSmall = function () {
-            this.score++;
-            this.label_score.text = "分数：" + this.score;
-            this.gameSpeed += 0.04;
-            this.frog.checkSpeed(this.gameSpeed);
+            this.setGameSpeed();
             var nowItem = this.roadArray[this.roadIndex];
             if (nowItem.tag == 4) {
                 this.jumpToBlast = true;
@@ -130,19 +119,17 @@ var game;
             }
         };
         GameMainView.prototype.jumpBig = function () {
-            this.score++;
-            this.label_score.text = "分数：" + this.score;
-            this.gameSpeed += 0.04;
-            this.frog.checkSpeed(this.gameSpeed);
+            this.setGameSpeed();
             var nowItem = this.roadArray[this.roadIndex];
             if (nowItem.tag == 4) {
-                // if (Math.random() < 0.5) { //一般概率炸
-                //     this.jumpToBlast = true;
-                //     this.frog.playAction(FrogJumpView.ACTIONS.jump_up_blast);
-                // } else {
-                this.roadIndex += 1;
-                this.frog.playAction(game.FrogJumpView.ACTIONS.jump_up);
-                // }
+                if (Math.random() < 0.2 && !this.play_self) { //概率炸
+                    this.jumpToBlast = true;
+                    this.frog.playAction(game.FrogJumpView.ACTIONS.jump_up_blast);
+                }
+                else {
+                    this.roadIndex += 1;
+                    this.frog.playAction(game.FrogJumpView.ACTIONS.jump_up);
+                }
                 return;
             }
             this.roadIndex += 2;
@@ -166,15 +153,25 @@ var game;
                     break;
             }
         };
+        GameMainView.prototype.setGameSpeed = function () {
+            if (this.label_jump.visible == true) { //提示
+                this.label_jump.visible = false;
+                this.label_jump.ani_play.stop();
+            }
+            this.score++;
+            this.label_score.text = "分数: " + this.score;
+            if (this.gameSpeed < 6) {
+                this.gameSpeed += 0.04;
+                this.frog.checkSpeed(this.gameSpeed);
+            }
+        };
         //开始
         GameMainView.prototype.start = function () {
             this.gameStatus = 1;
             // this.visible = true;
             // this.label_jump.pos(this.frog.x , this.frog.y - 50);
-            utl.MusicSoundTool.playMusic(def.MusicConfig.CommonMusic.game_bg);
-            this.label_jump.visible = false;
-            this.label_jump.ani_play.stop();
             Laya.timer.frameLoop(1, this, this.onLoop);
+            utl.MusicSoundTool.playMusic(def.MusicConfig.CommonMusic.game_bg);
         };
         //暂停
         GameMainView.prototype.pause = function () {
@@ -248,6 +245,10 @@ var game;
             //建筑景物
             this.buildingView = new game.RepeatImageView("frog/yuanjingcen.png");
             this.sp_map.addChild(this.buildingView);
+            //云层
+            this.cloudsView = new game.RepeatImageView("frog/yun.png");
+            this.sp_map.addChild(this.cloudsView);
+            this.cloudsView.y = 0;
             //水
             this.waterView = new game.WaterView;
             this.waterView.y = Laya.stage.height - this.waterView.picHeight;
@@ -278,7 +279,7 @@ var game;
             this.frog.on(game.FrogJumpView.ACTIONEND, this, this.frogActionOver);
             this.sp_map.addChild(this.frog);
             this.lastXpos = this.BEGINXPOS;
-            this.label_score.text = "分数：" + this.score;
+            this.label_score.text = "分数: " + this.score;
             this.gameSpeed = GameConfig.SPEED;
             this.frog.initPos(this.lastXpos, this.pillarYPos);
             this.frog.playAction(game.FrogJumpView.ACTIONS.stand);
@@ -353,6 +354,7 @@ var game;
             //布景移动
             this.waterView.run(this.gameSpeed + 0.1);
             this.buildingView.run(this.gameSpeed - 1);
+            this.cloudsView.run(this.gameSpeed - 2);
             this.bgView.run(this.gameSpeed - 1.5);
             this.playSelf();
             this.frog.x -= this.gameSpeed;
@@ -398,6 +400,9 @@ var game;
         GameMainView.prototype.frogActionOver = function (eventName) {
             var _this = this;
             if (eventName == game.FrogJumpView.EVENT_STOP) {
+                if (this.gameStatus != 1) {
+                    this.start();
+                }
                 var item = this.roadArray[this.roadIndex];
                 if (item.tag == 4) {
                     var posY = this.pillarYPos;
@@ -405,7 +410,6 @@ var game;
                     Tween.to(this.frog, { y: posY + 100 }, 200, null, laya.utils.Handler.create(this, function () {
                         _this.frog.falling = false;
                     }));
-                    // item.pillar.
                 }
             }
             else if (eventName == game.FrogJumpView.EVENT_DIE) {

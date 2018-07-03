@@ -6,26 +6,42 @@ namespace game {
     import KColorButton = kelong.ui.KColorButton;
     import Image = Laya.Image;
     import Browser = Laya.Browser;
+    import Storage = laya.net.LocalStorage;
 
     export class GameOverView extends ui.game.GameOverUI {
-        btn_ad: KColorButton;
         btn_rank: KColorButton;
-        btn_agin: KColorButton;
 
         //event
         AGIN = "playAgin";
         ADEND = "adEnd";
 
-        constructor(socre) {
+        constructor(score) {
             super();
             this.size(Laya.stage.width, Laya.stage.height);
             this.sp_bg.graphics.drawRect(0, 0, this.width, this.height, "#3485fb");
             this.list.renderHandler = new Laya.Handler(this, this.renderItem);
 
+            this.storageScore(score);
+            utl.ThirdSdk.bannerAD(true, (json)=>{
+                console.log("======>>>>>> bannerAd back : " + json);
+                let val = JSON.parse(json);
+                console.log(val.ret);
+            })
+
             this.box_title.graphics.drawRect(0, 0, this.box_title.width, this.box_title.height, "#78cbbb");
             this.box_listBg.graphics.drawRect(0, 0, this.box_listBg.width, this.box_listBg.height, "#cdffe3");            
             this.sp_rect.graphics.drawLines(0, 0, [2, 2, this.box_list.width-4, 2, this.box_list.width-4, this.box_list.height-4, 2, this.box_list.height-4, 2, 2], "#010303", 4);
             this.sp_rect.graphics.drawLines(0, 0, [0, 0, this.box_list.width, 0, this.box_list.width, this.box_list.height, 0, this.box_list.height, 0, 0], "#ffffff", 2);
+            
+            this.label_score.text = score;
+            if(score > def.GameConfig.MYSCORE) {
+                this.label_high.text = score + "";
+                this.img_new.visible = true;
+            } else {
+                this.label_high.text = def.GameConfig.MYSCORE + "";
+                this.img_new.visible = false;
+            }
+            //排行榜-关闭
             this.img_close.on(Event.MOUSE_OUT, this, () => {
                 this.img_close.scale(1, 1);
             });
@@ -43,47 +59,55 @@ namespace game {
                 this.btn_rank.visible = true;
                 this.btn_agin.visible = true;
             });
+            //再来一次
+            this.btn_agin.on(Event.MOUSE_OUT, this, () => {
+                this.btn_agin.scale(1, 1);
+            });
+            this.btn_agin.on(Event.MOUSE_DOWN, this, () =>{
+                this.btn_agin.scale(0.9, 0.9);
+            });
+            this.btn_agin.on(Event.MOUSE_UP, this, () => {
+                this.btn_agin.scale(1, 1);
+            });
+            this.btn_agin.on(Event.CLICK, this, () => {
+                this.event(this.AGIN);
+                this. clearSelf();
+            });
+            //广告续命
+            this.btn_ad.on(Event.MOUSE_OUT, this, () => {
+                this.btn_ad.scale(1, 1);
+            });
+            this.btn_ad.on(Event.MOUSE_DOWN, this, () =>{
+                this.btn_ad.scale(0.9, 0.9);
+            });
+            this.btn_ad.on(Event.MOUSE_UP, this, () => {
+                this.btn_ad.scale(1, 1);
+            });
+            this.btn_ad.on(Event.CLICK, this, () => {
+                this.adOperator();
+            });
+            
             this.box_my.graphics.drawRect(0,0, this.box_my.width, this.box_my.height, "#d5ff79");
             this.box_my.graphics.drawCircle(20, this.box_my.height-40, 20, "#8dc9a5");
             this.box_my.graphics.drawCircle(this.box_my.width-20, this.box_my.height-40, 20, "#8dc9a5");
             this.box_my.graphics.drawRect(20, this.box_my.height-60, this.box_my.width-40, 40, "#8dc9a5");
 
             this.list.vScrollBarSkin = "";
-            this.label_score.text = socre;
-
-            //广告
-            this.btn_ad = new KColorButton("广告续命");
-            this.btn_ad.centerX = 0;
-            this.btn_ad.centerY = -80;
-            this.addChild(this.btn_ad);
-            this.btn_ad.on("click", this, () => {
-                this.adOperator();
-            });
 
             //排行
             this.btn_rank = new KColorButton("排行总榜");
+            this.btn_rank.visible = false;
             this.btn_rank.centerX = 0;
             this.btn_rank.centerY = 40;
             this.addChild(this.btn_rank);
             this.btn_rank.on("click", this, () => {
                 this.showRank();
             });
+        }
 
-            //再来一把
-            this.btn_agin = new KColorButton("再来一盘");
-            this.btn_agin.centerX = 0;
-            this.btn_agin.centerY = 160;
-            this.addChild(this.btn_agin);
-            this.btn_agin.on("click", this, () => {
-                this.event(this.AGIN);
-                this.removeSelf();
-                this.destroy();
-            });
-
-            if(Browser.onAndriod || Browser.onIOS) {
-                this.btn_rank.visible = false;
-                this.btn_ad.centerY = -60;
-                this.btn_agin.centerY = 60;
+        storageScore(score) {
+            if(score > def.GameConfig.MYSCORE) {
+                Storage.setItem("score", score + "");
             }
         }
 
@@ -92,18 +116,23 @@ namespace game {
             utl.ThirdSdk.videoAD((json)=>{
                 console.log("======>>>>>> video back : " + json);
                 let val = JSON.parse(json);
-                console.log(val.ret);            
-                this.event(this.ADEND);
-                this.removeSelf();
-                this.destroy();
-                
+                console.log(val.ret);
                 // ret == true 表示广告播完并获得奖励
                 // ret == false 表示广告被关闭或者终止
-                if(val.ret) {    
-
+                if(val.ret) {
+                    this.event(this.ADEND);
+                    this. clearSelf();
                 }
-
             })
+        }
+
+        clearSelf() {            
+            utl.ThirdSdk.bannerAD(false, (json)=>{
+                console.log("======>>>>>> bannerAd back : ", json);
+            });
+            this.removeSelf();
+            this.destroy();
+
         }
 
         //排行榜

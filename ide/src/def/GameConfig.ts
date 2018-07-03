@@ -4,5 +4,6 @@ namespace def {
         static BIGSTEP = 320;
         static SMALLSTEP = 160;
         static PILLARWIDTH = 160;
+        static MYSCORE = 0;
     }
 }

@@ -24,11 +24,11 @@ var game;
             _this.pivot(_this.width / 2, 0);
             _this.trap = new Sprite();
             var ttrap = Laya.loader.getRes("frog/xianjing.png");
-            var trapWidth = GameConfig.PILLARWIDTH - 10;
+            var trapWidth = GameConfig.PILLARWIDTH - 26;
             var ttH = trapWidth * 0.31;
             _this.trap.graphics.drawTexture(ttrap, 0, 0, trapWidth, ttH);
             _this.trap.size(GameConfig.PILLARWIDTH, ttH);
-            _this.trap.pos(5, -ttH + 25);
+            _this.trap.pos(13, -ttH + 25);
             _this.addChildren(_this.trap);
             // this.trap = new Image("frog/xianjing.png")
             var p = new Sprite;
@@ -58,7 +58,6 @@ var game;
             else {
                 var ran = Math.random();
                 var idx = Math.floor(ran * Pillar.NEXTARRAY.length);
-                console.log("pillar", idx, ran);
                 if (idx == Pillar.NEXTARRAY.length) {
                     idx--;
                 }
@@ -66,7 +65,7 @@ var game;
                     idx = idxO == Pillar.NEXTARRAY.length - 1 ? 0 : idx + 1;
                 }
                 return {
-                    array: [1, 4, 1, 2, 1],
+                    array: Pillar.NEXTARRAY[idx],
                     idx: idx
                 };
             }

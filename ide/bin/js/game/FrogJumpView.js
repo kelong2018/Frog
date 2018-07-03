@@ -118,7 +118,7 @@ var game;
             if (interval == this.actionInterval) {
                 return;
             }
-            console.log("this.actionIntervalNNxxxxxx", interval, speed);
+            //console.log("this.actionIntervalNNxxxxxx", interval, speed);
             this.actionInterval = interval;
             this.jump_small.interval = interval;
             this.jump_big.interval = interval;

@@ -14,6 +14,7 @@ namespace game {
         //event
         AGIN = "playAgin";
         ADEND = "adEnd";
+        BACKMAIN = "backMain";
 
         constructor(score) {
             super();
@@ -86,6 +87,23 @@ namespace game {
             this.btn_ad.on(Event.CLICK, this, () => {
                 this.adOperator();
             });
+            
+            //返回主页
+            this.btn_backMain.on(Event.MOUSE_OUT, this, () => {
+                this.btn_backMain.scale(1, 1);
+            });
+            this.btn_backMain.on(Event.MOUSE_DOWN, this, () =>{
+                this.btn_backMain.scale(0.9, 0.9);
+            });
+            this.btn_backMain.on(Event.MOUSE_UP, this, () => {
+                this.btn_backMain.scale(1, 1);
+            });
+            this.btn_backMain.on(Event.CLICK, this, () => {
+                this.event(this.BACKMAIN);
+                this.clearSelf();
+            });
+
+            
             
             this.box_my.graphics.drawRect(0,0, this.box_my.width, this.box_my.height, "#d5ff79");
             this.box_my.graphics.drawCircle(20, this.box_my.height-40, 20, "#8dc9a5");

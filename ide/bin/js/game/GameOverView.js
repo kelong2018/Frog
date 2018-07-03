@@ -20,6 +20,7 @@ var game;
             //event
             _this.AGIN = "playAgin";
             _this.ADEND = "adEnd";
+            _this.BACKMAIN = "backMain";
             _this.size(Laya.stage.width, Laya.stage.height);
             _this.sp_bg.graphics.drawRect(0, 0, _this.width, _this.height, "#3485fb");
             _this.list.renderHandler = new Laya.Handler(_this, _this.renderItem);
@@ -86,6 +87,20 @@ var game;
             });
             _this.btn_ad.on(Event.CLICK, _this, function () {
                 _this.adOperator();
+            });
+            //返回主页
+            _this.btn_backMain.on(Event.MOUSE_OUT, _this, function () {
+                _this.btn_backMain.scale(1, 1);
+            });
+            _this.btn_backMain.on(Event.MOUSE_DOWN, _this, function () {
+                _this.btn_backMain.scale(0.9, 0.9);
+            });
+            _this.btn_backMain.on(Event.MOUSE_UP, _this, function () {
+                _this.btn_backMain.scale(1, 1);
+            });
+            _this.btn_backMain.on(Event.CLICK, _this, function () {
+                _this.event(_this.BACKMAIN);
+                _this.clearSelf();
             });
             _this.box_my.graphics.drawRect(0, 0, _this.box_my.width, _this.box_my.height, "#d5ff79");
             _this.box_my.graphics.drawCircle(20, _this.box_my.height - 40, 20, "#8dc9a5");

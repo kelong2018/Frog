@@ -202,6 +202,14 @@ var game;
             oView.on(oView.ADEND, this, function () {
                 _this.playAgin();
             });
+            //继续
+            oView.on(oView.BACKMAIN, this, function () {
+                var lobby = new LobbyView;
+                Laya.stage.addChild(lobby);
+                _this.removeChildren();
+                _this.removeSelf();
+                _this.destroy();
+            });
         };
         //再来一局
         GameMainView.prototype.playAgin = function () {
@@ -416,6 +424,14 @@ var game;
                 this.frog.visible = false;
                 this.gameOver();
             }
+            this.waterAction();
+        };
+        GameMainView.prototype.waterAction = function () {
+            var _this = this;
+            var posY = Laya.stage.height - this.waterView.picHeight;
+            Tween.to(this.waterView, { y: posY + 5 }, 80, null, laya.utils.Handler.create(this, function () {
+                Tween.to(_this.waterView, { y: posY }, 80, null);
+            }));
         };
         return GameMainView;
     }(ui.game.GameMainUI));

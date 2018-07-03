@@ -224,6 +224,14 @@ namespace game {
             oView.on(oView.ADEND, this, () => {
                 this.playAgin();
             });
+            //继续
+            oView.on(oView.BACKMAIN, this, () => {                
+                let lobby = new LobbyView;
+                Laya.stage.addChild(lobby);
+                this.removeChildren();
+                this.removeSelf();
+                this.destroy();
+            });
         }
 
         //再来一局
@@ -447,6 +455,16 @@ namespace game {
                 this.frog.visible = false;
                 this.gameOver();
             }
+            this.waterAction();
         }
+
+        waterAction() {
+            let posY = Laya.stage.height - this.waterView.picHeight;
+            Tween.to(this.waterView, {y: posY + 5}, 80, null,laya.utils.Handler.create(this, () => {
+                Tween.to(this.waterView, {y: posY}, 80, null);
+            })
+            );
+        }
+        
     }
 }

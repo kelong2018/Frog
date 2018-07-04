@@ -257,13 +257,17 @@ var game;
             this.cloudsView = new game.RepeatImageView("frog/yun.png");
             this.sp_map.addChild(this.cloudsView);
             this.cloudsView.y = 0;
+            //石头
+            this.stoneView = new game.ScrollView("frog/wuqi.png");
+            this.addChild(this.stoneView);
             //水
-            this.waterView = new game.WaterView;
+            this.waterView = new game.ScrollView("frog/shui.png");
             this.waterView.y = Laya.stage.height - this.waterView.picHeight;
             this.waterView.zOrder = this.sp_map.zOrder + 1;
             this.box_tips.zOrder = this.waterView.zOrder + 1;
             this.addChild(this.waterView);
-            this.buildingView.y = this.waterView.y - 209;
+            this.buildingView.y = this.waterView.y - 200;
+            this.stoneView.y = this.waterView.y + 8 - 62;
             this.sp_tips.graphics.drawRect(0, 0, this.width, this.height, "#000000");
             this.sp_white.graphics.drawRect(0, 0, this.width, this.height, "#ffffff");
             this.box_tips.on(Laya.Event.CLICK, this, function () {
@@ -361,6 +365,7 @@ var game;
         GameMainView.prototype.onLoop = function () {
             //布景移动
             this.waterView.run(this.gameSpeed + 0.1);
+            this.stoneView.run(this.gameSpeed);
             this.buildingView.run(this.gameSpeed - 1);
             this.cloudsView.run(this.gameSpeed - 2);
             this.bgView.run(this.gameSpeed - 1.5);

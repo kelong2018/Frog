@@ -12,20 +12,21 @@ var game;
 (function (game) {
     var Sprite = Laya.Sprite;
     var Image = Laya.Image;
-    var WaterView = /** @class */ (function (_super) {
-        __extends(WaterView, _super);
-        function WaterView() {
+    var ScrollView = /** @class */ (function (_super) {
+        __extends(ScrollView, _super);
+        function ScrollView(src) {
             var _this = _super.call(this) || this;
             _this.waters = [];
             _this.picWidth = 0;
             _this.picHeight = 0;
             _this.lastPic = null;
+            _this.source = src;
             _this.init();
             return _this;
         }
-        WaterView.prototype.init = function () {
+        ScrollView.prototype.init = function () {
             var water1 = new Image();
-            water1.skin = "frog/shui.png";
+            water1.skin = this.source;
             water1.x = 0;
             this.addChild(water1);
             this.waters.push(water1);
@@ -33,14 +34,14 @@ var game;
             this.picHeight = water1.height;
             var num = Math.floor(Laya.stage.width / water1.width);
             for (var i = 0; i < num + 1; i++) {
-                var water = new Image("frog/shui.png");
+                var water = new Image(this.source);
                 water.x = this.picWidth * (i + 1);
                 this.addChild(water);
                 this.waters.push(water);
             }
             this.lastPic = this.waters[this.waters.length - 1];
         };
-        WaterView.prototype.run = function (rate) {
+        ScrollView.prototype.run = function (rate) {
             for (var i = 0; i < this.waters.length; i++) {
                 if (this.waters[i].x + this.picWidth < -1) {
                     this.waters[i].x = this.lastPic.x + this.picWidth;
@@ -49,8 +50,8 @@ var game;
                 this.waters[i].x -= rate;
             }
         };
-        return WaterView;
+        return ScrollView;
     }(Sprite));
-    game.WaterView = WaterView;
+    game.ScrollView = ScrollView;
 })(game || (game = {}));
 //# sourceMappingURL=WaterView.js.map

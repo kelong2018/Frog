@@ -11,6 +11,8 @@ var __extends = (this && this.__extends) || (function () {
 var game;
 (function (game) {
     var GameConfig = def.GameConfig;
+    var Image = Laya.Image;
+    var Tween = Laya.Tween;
     var FrogJumpView = /** @class */ (function (_super) {
         __extends(FrogJumpView, _super);
         function FrogJumpView() {
@@ -20,7 +22,11 @@ var game;
             _this.actionInterval = 0;
             _this.speedDif = 0;
             _this.initYPos = 0;
+            _this.havePlayBlast = false;
             _this.pivot(0, _this.height);
+            _this.coin = new Image("frog/+1.png");
+            _this.coin.visible = false;
+            _this.addChild(_this.coin);
             _this.jump_small.on(Laya.Event.COMPLETE, _this, function () {
                 _this.event(FrogJumpView.ACTIONEND, FrogJumpView.EVENT_STOP);
                 _this.playAction(FrogJumpView.ACTIONS.stand);
@@ -52,6 +58,7 @@ var game;
                 _this.x += GameConfig.SMALLSTEP;
             });
             _this.jump_up_blast.on(Laya.Event.COMPLETE, _this, function () {
+                _this.playBlastSound();
                 _this.event(FrogJumpView.ACTIONEND, FrogJumpView.EVENT_DIE);
             });
             _this.actionInterval = _this.jump_small.interval;
@@ -84,7 +91,7 @@ var game;
                 this.jump_big.play(0, false);
             }
             else if (actionName == FrogJumpView.ACTIONS.stand_blast) {
-                utl.MusicSoundTool.playSound(def.MusicConfig.CommonSound.blast);
+                this.playBlastSound();
                 this.stand_blast.play(0, false);
             }
             else if (actionName == FrogJumpView.ACTIONS.jump_small_blast) {
@@ -129,6 +136,21 @@ var game;
             this.jump_big_fall.interval = interval;
             this.jump_up.interval = interval;
             this.jump_up_blast.interval = interval;
+        };
+        FrogJumpView.prototype.getCoin = function () {
+            var _this = this;
+            this.coin.visible = true;
+            this.coin.pos(-10, this.img_frog.y - 80);
+            var tw = Tween.to(this.coin, { y: this.img_frog.y - 120 }, 300, null, Laya.Handler.create(this, function () {
+                _this.coin.visible = false;
+                Tween.clear(tw);
+            }));
+        };
+        FrogJumpView.prototype.playBlastSound = function () {
+            if (!this.havePlayBlast) {
+                this.havePlayBlast = true;
+                utl.MusicSoundTool.playSound(def.MusicConfig.CommonSound.blast);
+            }
         };
         //event
         FrogJumpView.ACTIONEND = "actionEnd";

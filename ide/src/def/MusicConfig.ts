@@ -6,7 +6,8 @@ namespace def.MusicConfig {
     }
     export var CommonSound = {
         blast: "did", //爆炸
-        jump: "jump"  //跳
+        jump: "jump",  //跳
+        eat: "eat" //吃金币
     }
 
     export function initMusic(type) {

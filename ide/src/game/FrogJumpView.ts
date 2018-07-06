@@ -1,6 +1,8 @@
 namespace game {
 
     import GameConfig = def.GameConfig;
+    import Image = Laya.Image;
+    import Tween = Laya.Tween;
 
     export class FrogJumpView extends ui.game.FrogViewUI {
 
@@ -22,17 +24,22 @@ namespace game {
             jump_up_blast: "jup_up_blast",
         }
 
-        inJump:boolean = false;
+        inJump: boolean = false;
         falling: boolean = false;
         actionInterval = 0;
         speedDif = 0;
         initYPos = 0;
+        coin: Image;
+        havePlayBlast = false;
 
         constructor() {
             super();
-            
+
             this.pivot(0, this.height);
-            
+            this.coin = new Image("frog/+1.png");
+            this.coin.visible = false;
+            this.addChild(this.coin);
+
             this.jump_small.on(Laya.Event.COMPLETE, this, () => {
                 this.event(FrogJumpView.ACTIONEND, FrogJumpView.EVENT_STOP);
                 this.playAction(FrogJumpView.ACTIONS.stand);
@@ -62,8 +69,9 @@ namespace game {
                 this.event(FrogJumpView.ACTIONEND, FrogJumpView.EVENT_STOP);
                 this.playAction(FrogJumpView.ACTIONS.stand);
                 this.x += GameConfig.SMALLSTEP;
-            });            
-            this.jump_up_blast.on(Laya.Event.COMPLETE, this, () => {
+            });
+            this.jump_up_blast.on(Laya.Event.COMPLETE, this, () => {                
+                this.playBlastSound();
                 this.event(FrogJumpView.ACTIONEND, FrogJumpView.EVENT_DIE);
             });
             this.actionInterval = this.jump_small.interval;
@@ -96,7 +104,7 @@ namespace game {
                 utl.MusicSoundTool.playSound(def.MusicConfig.CommonSound.jump);
                 this.jump_big.play(0, false);
             } else if (actionName == FrogJumpView.ACTIONS.stand_blast) {
-                utl.MusicSoundTool.playSound(def.MusicConfig.CommonSound.blast);
+                this.playBlastSound();
                 this.stand_blast.play(0, false);
             } else if (actionName == FrogJumpView.ACTIONS.jump_small_blast) {
                 this.jump_small_blast.play(0, false);
@@ -116,14 +124,14 @@ namespace game {
         checkSpeed(speed) {
             let dif = speed - GameConfig.SPEED;
             let difNum = Math.floor(dif / 0.5);
-            if(this.speedDif != difNum) {
+            if (this.speedDif != difNum) {
                 this.setInterval(this.actionInterval - 5, speed);
                 this.speedDif = difNum;
             }
         }
 
         setInterval(interval, speed) {
-            if(interval == this.actionInterval) {
+            if (interval == this.actionInterval) {
                 return;
             }
             //console.log("this.actionIntervalNNxxxxxx", interval, speed);
@@ -137,6 +145,22 @@ namespace game {
             this.jump_big_fall.interval = interval;
             this.jump_up.interval = interval;
             this.jump_up_blast.interval = interval;
+        }
+
+        getCoin() {
+            this.coin.visible = true;
+            this.coin.pos(-10, this.img_frog.y - 80);
+            let tw = Tween.to(this.coin, { y: this.img_frog.y - 120 }, 300, null, Laya.Handler.create(this, () => {
+                this.coin.visible = false;
+                Tween.clear(tw);
+            }));
+        }
+
+        playBlastSound() {
+            if (!this.havePlayBlast) {
+                this.havePlayBlast = true;
+                utl.MusicSoundTool.playSound(def.MusicConfig.CommonSound.blast);
+            }
         }
     }
 }

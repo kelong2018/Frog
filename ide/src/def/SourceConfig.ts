@@ -9,6 +9,13 @@ namespace def {
             { url: "res/atlas/frog.atlas", type: Laya.Loader.ATLAS },
             { url: "frog/yuanjingcen.png", type: Laya.Loader.IMAGE },
             { url: "frog/yun.png", type: Laya.Loader.IMAGE },
+            { url: "frog/bg.png", type: Laya.Loader.IMAGE },
+            { url: "frog/overBg.png", type: Laya.Loader.IMAGE },
+            { url: "frog/ha.png", type: Laya.Loader.IMAGE },
         ];
+        //游戏动画
+        static animationSource = {
+            "coinAction": "game/CoinAction.ani",
+        }
     }
 }

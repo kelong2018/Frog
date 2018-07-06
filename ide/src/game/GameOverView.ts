@@ -125,6 +125,7 @@ namespace game {
 
         storageScore(score) {
             if(score > def.GameConfig.MYSCORE) {
+                def.GameConfig.MYSCORE = score;
                 Storage.setItem("score", score + "");
             }
         }

@@ -6,8 +6,10 @@ namespace game {
     import Frog = game.FrogJumpView;
     import ButtonGo = kelong.ui.KButtonGO;
     import Tween = Laya.Tween;
+    import Handler = laya.utils.Handler;
 
     export class GameMainView extends ui.game.GameMainUI {
+
         BEGINXPOS = 180; //开始位置
         COUNTDOWNNUM = 3;   //倒计时时间
 
@@ -30,7 +32,7 @@ namespace game {
         haveNullBefore;      //前边有空柱子
         speedAddTag = 0;        //游戏速度加速次数标记
         gameSpeed;  //游戏速度
-
+        
         pillarYPos;
         //场景
         //背景
@@ -45,7 +47,7 @@ namespace game {
         stoneView: ScrollView;
         label_jump: ui.comp.LabelScaleAniUI;
 
-        play_self:boolean = false;
+        play_self: boolean = false;
 
         gameMode;   //游戏模式
         /**
@@ -60,7 +62,7 @@ namespace game {
             // this.start();
             this.box_control.on(Laya.Event.MOUSE_DOWN, this, this.onMouseDown);
             this.box_control.on(Laya.Event.MOUSE_UP, this, this.onMouseUp);
-            this.label_score.on(Laya.Event.DOUBLE_CLICK, this, ()=>{
+            this.label_score.on(Laya.Event.DOUBLE_CLICK, this, () => {
                 // this.play_self = !this.play_self; //自己跳
             })
             // this.label_control.on("click", this, this.gameControl);
@@ -108,7 +110,8 @@ namespace game {
         }
 
         jumpSmall() {
-            this.setGameSpeed()
+            this.setGameSpeed();
+            this.setScore();
 
             let nowItem = this.roadArray[this.roadIndex]
             if (nowItem.tag == 4) {
@@ -139,7 +142,8 @@ namespace game {
         }
 
         jumpBig() {
-            this.setGameSpeed()
+            this.setGameSpeed();
+            this.setScore();
 
             let nowItem = this.roadArray[this.roadIndex]
             if (nowItem.tag == 4) {
@@ -175,16 +179,19 @@ namespace game {
         }
 
         setGameSpeed() {
-            if(this.label_jump.visible == true) { //提示
+            if (this.gameSpeed < 6) {
+                this.gameSpeed += 0.04;
+                this.frog.checkSpeed(this.gameSpeed);
+            }
+        }
+
+        setScore() {
+            if (this.label_jump.visible == true) { //提示
                 this.label_jump.visible = false;
                 this.label_jump.ani_play.stop();
             }
             this.score++;
             this.label_score.text = "分数: " + this.score;
-            if(this.gameSpeed < 6) {
-                this.gameSpeed += 0.04;
-                this.frog.checkSpeed(this.gameSpeed);
-            }
         }
 
         //开始
@@ -193,6 +200,7 @@ namespace game {
             // this.visible = true;
             // this.label_jump.pos(this.frog.x , this.frog.y - 50);
             Laya.timer.frameLoop(1, this, this.onLoop);
+            this.beginWaterAction();
             utl.MusicSoundTool.playMusic(def.MusicConfig.CommonMusic.game_bg);
         }
 
@@ -211,7 +219,6 @@ namespace game {
 
         //游戏结束
         gameOver() {
-            console.log("speed....", this.gameSpeed);
             this.pause();
             this.label_score.text = "";
             let oView = new GameOverView(this.score);
@@ -227,9 +234,9 @@ namespace game {
                 this.playAgin();
             });
             //继续
-            oView.on(oView.BACKMAIN, this, () => {                
-                let lobby = new LobbyView;
-                Laya.stage.addChild(lobby);
+            oView.on(oView.BACKMAIN, this, () => {
+                let lobbyMian = new lobby.LobbyMainView;
+                Laya.stage.addChild(lobbyMian);
                 this.removeChildren();
                 this.removeSelf();
                 this.destroy();
@@ -320,7 +327,8 @@ namespace game {
             this.roadIndex = 0;
             this.roadArray = [];
             this.frog.on(FrogJumpView.ACTIONEND, this, this.frogActionOver);
-            this.sp_map.addChild(this.frog);
+            this.addChild(this.frog);
+            // this.sp_map.addChild(this.frog);
             this.lastXpos = this.BEGINXPOS;
             this.label_score.text = "分数: " + this.score;
             this.gameSpeed = GameConfig.SPEED;
@@ -357,8 +365,13 @@ namespace game {
                 this.haveNullBefore = false;
                 let haveTrap = this.pillarShowArray[this.pillarIndex] == 3;
                 let pillar: Pillar = Laya.Pool.getItemByClass(Pillar.PILLARTAG, Pillar);
-                pillar.init(this.lastXpos, this.pillarYPos, haveTrap);
-                pillar.zOrder = 1;
+                let haveCoin = false;
+                if(this.roadArray.length > 8 && !haveTrap) {
+                    if(Math.random() > 0.6) {
+                        haveCoin = true;
+                    }
+                }
+                pillar.init(this.lastXpos, this.pillarYPos, haveCoin, haveTrap);
                 this.sp_map.addChild(pillar);
                 this.pillarArray.push(pillar);
                 item.pillar = pillar;
@@ -368,24 +381,24 @@ namespace game {
         }
 
         playSelf() {
-            if(!this.play_self) {
+            if (!this.play_self) {
                 return;
             }
             if (this.frog.inJump || this.frog.falling) {  //未落地，操作无效
                 return;
             }
-            if(this.frog.x < this.width / 3) {
+            if (this.frog.x < this.width / 3) {
                 let nowItem = this.roadArray[this.roadIndex]
                 if (nowItem.tag == 4) {
                     this.jumpBig();
                     return;
                 }
                 let item = this.roadArray[this.roadIndex + 1];
-                if(item == null) {
+                if (item == null) {
                     return;
                 }
                 //1-柱子，2-没有柱子，3-柱子上有刺，4-柱子掉落
-                if(item.tag == 1 || item.tag == 4) {
+                if (item.tag == 1 || item.tag == 4) {
                     this.jumpSmall()
                 } else {
                     this.jumpBig();
@@ -423,7 +436,7 @@ namespace game {
                 let frogY = this.frog.getRealPosY();
                 if (frogY <= this.pillarYPos - 4 && !this.havePlayBlast) {
                     this.havePlayBlast = true;
-                    utl.MusicSoundTool.playSound(def.MusicConfig.CommonSound.blast);
+                    this.frog.playBlastSound();
                 }
             }
 
@@ -438,7 +451,7 @@ namespace game {
                     }
                 }
                 let lastXpos = this.pillarArray[this.pillarArray.length - 1].x;
-                if (lastXpos <= Laya.stage.width) {
+                if (lastXpos <= Laya.stage.width + 300) {
                     this.addPillar();
                 }
             }
@@ -450,6 +463,11 @@ namespace game {
                     this.start();
                 }
                 let item = this.roadArray[this.roadIndex]
+                if(item.pillar.haveCoin) {
+                    item.pillar.hideCoin();
+                    this.frog.getCoin();
+                    this.setScore();
+                }
                 if (item.tag == 4) {
                     let posY = this.pillarYPos;
                     Tween.to(item.pillar, { y: posY + 100 }, 200);
@@ -462,16 +480,23 @@ namespace game {
                 this.frog.visible = false;
                 this.gameOver();
             }
-            this.waterAction();
         }
 
-        waterAction() {
-            let posY = Laya.stage.height - this.waterView.picHeight;
-            Tween.to(this.waterView, {y: posY + 5}, 80, null,laya.utils.Handler.create(this, () => {
-                Tween.to(this.waterView, {y: posY}, 80, null);
-            })
-            );
+        beginWaterAction() {
+            if(this.gameStatus != 1) {
+                return;
+            }
+            let posY = Laya.stage.height - this.waterView.picHeight;            
+            Tween.clearTween(this.beginWaterAction);
+            Tween.to(this.waterView, { y: posY + 5 }, 500, null, Handler.create(this, this.onTween1));
         }
-        
+        onTween1() {
+            if(this.gameStatus != 1) {
+                return;
+            }
+            let posY = Laya.stage.height - this.waterView.picHeight;
+            Tween.clearTween(this.onTween1);
+            Tween.to(this.waterView, { y: posY }, 500, null, Handler.create(this, this.beginWaterAction));
+        }
     }
 }

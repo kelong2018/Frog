@@ -1,13 +1,15 @@
 D .
 D frog
+P C2880138 +1.png
 P 10996112 adAgin.png
 P 275F2322 backMain.png
 R 782DB96F bg.png
 P 83004C91 button_begin.png
 P AFC788B8 closeButton.png
+R AD169095 ha.png
 P 18A12C16 img_tip.png
 P D7361DBD imgAgin.png
-P B1FFD437 logo.png
+R C8B79F70 logo.png
 P AEA158D4 new.png
 R 26400FFC overBg.png
 P A3D7BBB4 rank1.png
@@ -24,6 +26,7 @@ P C0743274 tiao_06.png
 P CB00AFE9 tiao_07.png
 P 1C3EFA9D tiao_08.png
 P 5989F699 tiao_09.png
+P 6529CC8D time.png
 P F93E2193 wuqi.png
 P 13630391 xianjing.png
 R CA8B893E yuanjingcen.png

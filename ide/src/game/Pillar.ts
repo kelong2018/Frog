@@ -11,9 +11,13 @@ namespace game {
         static PILLARTAG = "pillar";
         //1-柱子，2-没有柱子，3-柱子上有刺，4-柱子掉落
         static BEGINARRAY = [1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 3, 1, 1, 2];
-        static NEXTARRAY = [[1, 2, 1, 3, 1], [1, 3, 1, 1, 2], [1, 2, 1, 3, 1], [1, 3, 1, 2, 1], [1, 4, 1, 2, 1]];
+        static NEXTARRAY = [[1, 2, 1, 3, 1], [1, 3, 1, 1, 2], [1, 2, 1, 3, 1], [1, 3, 1, 2, 1], [1, 4, 1, 2, 1], [1, 3, 4, 1]];
         haveTrap = false;
         trap;//: Laya.Image; //陷阱
+
+        coinAciton;
+        haveCoin = false;
+
         constructor() {
             super();
             this.size(GameConfig.PILLARWIDTH, Laya.stage.height / 2);
@@ -28,6 +32,13 @@ namespace game {
             this.trap.pos(13, -ttH + 25);
             this.addChildren(this.trap);
 
+            this.coinAciton = new Laya.Animation();
+            this.coinAciton.pos(this.width/2 , -40);
+            this.addChild(this.coinAciton);
+            let anim = def.SourceConfig.animationSource.coinAction + "#aniUD";
+            this.coinAciton.play(0, true, anim);
+            this.coinAciton.visible = false;
+
             // this.trap = new Image("frog/xianjing.png")
             let p = new Sprite;
             let t: Laya.Texture = Laya.loader.getRes("frog/zhuzi.png");
@@ -36,10 +47,17 @@ namespace game {
             this.addChild(p);
         }
 
-        init(x, y, haveTrap?) {
+        init(x, y, haveCoin, haveTrap?) {
             this.pos(x, y);
+            this.haveCoin = haveCoin;
+            this.coinAciton.visible = haveCoin;
             this.trap.visible = haveTrap;
             this.haveTrap = haveTrap;
+        }
+
+        hideCoin() {
+            this.coinAciton.visible = false;
+            utl.MusicSoundTool.playSound(def.MusicConfig.CommonSound.eat);
         }
 
         /**

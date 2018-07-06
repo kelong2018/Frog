@@ -120,6 +120,7 @@ var game;
         }
         GameOverView.prototype.storageScore = function (score) {
             if (score > def.GameConfig.MYSCORE) {
+                def.GameConfig.MYSCORE = score;
                 Storage.setItem("score", score + "");
             }
         };

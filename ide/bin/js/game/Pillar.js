@@ -20,6 +20,7 @@ var game;
         function Pillar() {
             var _this = _super.call(this) || this;
             _this.haveTrap = false;
+            _this.haveCoin = false;
             _this.size(GameConfig.PILLARWIDTH, Laya.stage.height / 2);
             _this.pivot(_this.width / 2, 0);
             _this.trap = new Sprite();
@@ -30,6 +31,12 @@ var game;
             _this.trap.size(GameConfig.PILLARWIDTH, ttH);
             _this.trap.pos(13, -ttH + 25);
             _this.addChildren(_this.trap);
+            _this.coinAciton = new Laya.Animation();
+            _this.coinAciton.pos(_this.width / 2, -40);
+            _this.addChild(_this.coinAciton);
+            var anim = def.SourceConfig.animationSource.coinAction + "#aniUD";
+            _this.coinAciton.play(0, true, anim);
+            _this.coinAciton.visible = false;
             // this.trap = new Image("frog/xianjing.png")
             var p = new Sprite;
             var t = Laya.loader.getRes("frog/zhuzi.png");
@@ -38,10 +45,16 @@ var game;
             _this.addChild(p);
             return _this;
         }
-        Pillar.prototype.init = function (x, y, haveTrap) {
+        Pillar.prototype.init = function (x, y, haveCoin, haveTrap) {
             this.pos(x, y);
+            this.haveCoin = haveCoin;
+            this.coinAciton.visible = haveCoin;
             this.trap.visible = haveTrap;
             this.haveTrap = haveTrap;
+        };
+        Pillar.prototype.hideCoin = function () {
+            this.coinAciton.visible = false;
+            utl.MusicSoundTool.playSound(def.MusicConfig.CommonSound.eat);
         };
         /**
          * 获取展示 array
@@ -73,7 +86,7 @@ var game;
         Pillar.PILLARTAG = "pillar";
         //1-柱子，2-没有柱子，3-柱子上有刺，4-柱子掉落
         Pillar.BEGINARRAY = [1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 3, 1, 1, 2];
-        Pillar.NEXTARRAY = [[1, 2, 1, 3, 1], [1, 3, 1, 1, 2], [1, 2, 1, 3, 1], [1, 3, 1, 2, 1], [1, 4, 1, 2, 1]];
+        Pillar.NEXTARRAY = [[1, 2, 1, 3, 1], [1, 3, 1, 1, 2], [1, 2, 1, 3, 1], [1, 3, 1, 2, 1], [1, 4, 1, 2, 1], [1, 3, 4, 1]];
         return Pillar;
     }(Sprite));
     game.Pillar = Pillar;

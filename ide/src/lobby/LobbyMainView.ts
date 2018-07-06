@@ -23,6 +23,17 @@ namespace lobby {
             
             this.getMyScore();
             this.initView();
+            this.loadSomeAnimation();
+        }
+        
+        //加载一些游戏中要使用的动画，生成模板
+        loadSomeAnimation() {
+            let anis = def.SourceConfig.animationSource;
+            for (let ani in anis) {
+                let animation = new Laya.Animation();
+                animation.loadAnimation(anis[ani], Laya.Handler.create(this, () => {                    
+                }));
+            }
         }
 
         initView() {
@@ -31,14 +42,21 @@ namespace lobby {
             bg.bottom = 0;
             bg.width = this.width;
             this.addChild(bg);
+            let ha = new Image("frog/ha.png");
+            ha.bottom = 0;
+            let rate = this.width/ha.width;
+            ha.scale(rate, rate);
+            this.addChild(ha);
+
             if(def.GameConfig.MYSCORE > 0) {
                 let tip = new Image("frog/img_tip.png");
                 tip.top = 0;
                 tip.centerX = 0;
+                tip.width = 490;
                 this.addChild(tip);
-                let rank = new Label("你超过越了全世界"+this.getRanck()+"的蛙");
+                let rank = new Label("在做成功蛤的道路上超越了全世界"+this.getRanck()+"的蛤");
                 rank.font = "黑体";
-                rank.fontSize = 30;
+                rank.fontSize = 24;
                 rank.color = "#ffffff";
                 rank.centerX = 0;
                 rank.centerY = 0;
@@ -46,8 +64,8 @@ namespace lobby {
             }
             let button = new Image("frog/button_begin.png");
             button.centerX = 0;
-            button.centerY = 0;
-            this.addChild(button);
+            button.y = ha.height * 0.31
+            ha.addChild(button);
             button.on(Event.MOUSE_OUT, this, () => {
                 button.scale(1, 1);
             });
@@ -59,27 +77,22 @@ namespace lobby {
             });
             button.on(Event.CLICK, this, this.beginGame);
 
-            let logo = new Image("frog/logo.png");
-            logo.centerX = 0;
-            logo.y = 160;
-            this.addChild(logo);
-
             let frog = new Frog;
             frog.centerX = 0;
-            frog.y = 240;
+            frog.y = button.y - 200;
             frog.scale(2.5,2.5);
             frog.jump.play(0, true);
-            this.addChild(frog);
+            ha.addChild(frog);
 
             this.label_loading = new Label;
             this.label_loading.text = "加载中..."
             this.label_loading.font = "黑体"
             this.label_loading.bold = true;
-            this.label_loading.color = "#ffffff";
+            this.label_loading.color = "#e6755b";
             this.label_loading.centerX = 0;
-            this.label_loading.y = 460;
+            this.label_loading.y = button.y + 20;
             this.label_loading.fontSize = 40;
-            this.addChild(this.label_loading);
+            ha.addChild(this.label_loading);
 
             //广告加载后方可进入游戏          
             this.label_loading.visible = true;
@@ -96,7 +109,7 @@ namespace lobby {
             let countDown = 3;
             Laya.timer.loop(1000, this, () => {  //倒计时
                 countDown--;
-                if (countDown < 0) {                    
+                if (countDown < 0) {
                     Laya.timer.clearAll(this);
                     this.label_loading.visible = false;
                     button.visible = true;
@@ -128,45 +141,41 @@ namespace lobby {
             let maxScore = 200;  //设计一个区间
             let begin = 0;
             let add = 0;
-            if(myScore < 10) {
-                begin = 1;
-            } else if(myScore < 20) { // %5
-                begin = 5;
-                add = Math.floor((myScore - 10) * 10 / 10)/10;
-            } else if(myScore < 30) { //10
-                begin = 10;
-                add = Math.floor((myScore - 20) * 10 / 10)/10;
-            } else if(myScore < 40) { //15
-                begin = 15;
-                add = Math.floor((myScore - 30) * 10 / 10)/10;
-            } else if(myScore < 45) { //20
-                begin = 20;
-                add = Math.floor((myScore - 40) * 10 / 5)/10;
-            } else if(myScore < 50) { //40
-                begin = 40;
-                add = Math.floor((myScore - 45) * 10 / 5)/10;      
-            } else if(myScore < 60) { //60
-                begin = 60;
-                add = Math.floor((myScore - 50) * 10 / 10)/10;      
-            } else if(myScore < 70) { //70
-                begin = 70;
-                add = Math.floor((myScore - 60) * 10 / 10)/10;
-            } else if(myScore < 80) { //80
-                begin = 80;
-                add = Math.floor((myScore - 70) * 10 / 10)/10;
-            } else if(myScore < 90) { //80
-                begin = 20;
-                add = Math.floor((myScore - 80) * 10 / 10)/10;
-            } else if(myScore < 100) { //85
-                begin = 85;
-                add = Math.floor((myScore - 90) * 10 / 10)/10;
-            } else if(myScore < 120) { //90
-                begin = 90;
-                add = Math.floor((myScore - 100) * 10 / 20)/10;
-            } else {
+            if(myScore > 150) {
                 begin = 99;
+            } else if(myScore > 120) {
+                begin = 90;
+                add = (myScore - 120) * 9 / (150-120)
+            } else if(myScore > 100) {
+                begin = 84;
+                add = (myScore - 100) * 6 / (120-100)
+            } else if(myScore > 90) {
+                begin = 76;
+                add = (myScore - 90) * 8 / (100-90)
+            } else if(myScore > 80) {
+                begin = 70;
+                add = (myScore - 80) * 6 / (90-80)
+            } else if(myScore > 70) {
+                begin = 60;
+                add = (myScore - 70) * 10 / (80-70)
+            } else if(myScore > 60){
+                begin = 40;
+                add = (myScore - 60) * 20 / (70-60)
+            } else if(myScore > 40) {
+                begin = 20;
+                add = (myScore - 40) * 20 / (60-40);
+            } else if(myScore > 20) {
+                begin = 8;
+                add = (myScore - 20) * 12 / (40-20);
+            } else if(myScore > 10) {
+                begin = 3;
+                add = (myScore - 10) * 10 / (20-10)
+            } else if(myScore > 0){
+                begin = 1
+            } else {
+                begin = 0;
             }
-            return (begin + add) + "%";
+            return Math.floor(begin + add) + "%";
         }
     }
 }

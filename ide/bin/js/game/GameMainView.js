@@ -14,6 +14,7 @@ var game;
     var GameConfig = def.GameConfig;
     var Frog = game.FrogJumpView;
     var Tween = Laya.Tween;
+    var Handler = laya.utils.Handler;
     var GameMainView = /** @class */ (function (_super) {
         __extends(GameMainView, _super);
         /**
@@ -91,6 +92,7 @@ var game;
         };
         GameMainView.prototype.jumpSmall = function () {
             this.setGameSpeed();
+            this.setScore();
             var nowItem = this.roadArray[this.roadIndex];
             if (nowItem.tag == 4) {
                 this.jumpToBlast = true;
@@ -120,6 +122,7 @@ var game;
         };
         GameMainView.prototype.jumpBig = function () {
             this.setGameSpeed();
+            this.setScore();
             var nowItem = this.roadArray[this.roadIndex];
             if (nowItem.tag == 4) {
                 if (Math.random() < 0.2 && !this.play_self) { //概率炸
@@ -154,16 +157,18 @@ var game;
             }
         };
         GameMainView.prototype.setGameSpeed = function () {
+            if (this.gameSpeed < 6) {
+                this.gameSpeed += 0.04;
+                this.frog.checkSpeed(this.gameSpeed);
+            }
+        };
+        GameMainView.prototype.setScore = function () {
             if (this.label_jump.visible == true) { //提示
                 this.label_jump.visible = false;
                 this.label_jump.ani_play.stop();
             }
             this.score++;
             this.label_score.text = "分数: " + this.score;
-            if (this.gameSpeed < 6) {
-                this.gameSpeed += 0.04;
-                this.frog.checkSpeed(this.gameSpeed);
-            }
         };
         //开始
         GameMainView.prototype.start = function () {
@@ -171,6 +176,7 @@ var game;
             // this.visible = true;
             // this.label_jump.pos(this.frog.x , this.frog.y - 50);
             Laya.timer.frameLoop(1, this, this.onLoop);
+            this.beginWaterAction();
             utl.MusicSoundTool.playMusic(def.MusicConfig.CommonMusic.game_bg);
         };
         //暂停
@@ -187,7 +193,6 @@ var game;
         //游戏结束
         GameMainView.prototype.gameOver = function () {
             var _this = this;
-            console.log("speed....", this.gameSpeed);
             this.pause();
             this.label_score.text = "";
             var oView = new game.GameOverView(this.score);
@@ -204,8 +209,8 @@ var game;
             });
             //继续
             oView.on(oView.BACKMAIN, this, function () {
-                var lobby = new LobbyView;
-                Laya.stage.addChild(lobby);
+                var lobbyMian = new lobby.LobbyMainView;
+                Laya.stage.addChild(lobbyMian);
                 _this.removeChildren();
                 _this.removeSelf();
                 _this.destroy();
@@ -289,7 +294,8 @@ var game;
             this.roadIndex = 0;
             this.roadArray = [];
             this.frog.on(game.FrogJumpView.ACTIONEND, this, this.frogActionOver);
-            this.sp_map.addChild(this.frog);
+            this.addChild(this.frog);
+            // this.sp_map.addChild(this.frog);
             this.lastXpos = this.BEGINXPOS;
             this.label_score.text = "分数: " + this.score;
             this.gameSpeed = GameConfig.SPEED;
@@ -326,8 +332,13 @@ var game;
                 this.haveNullBefore = false;
                 var haveTrap = this.pillarShowArray[this.pillarIndex] == 3;
                 var pillar = Laya.Pool.getItemByClass(game.Pillar.PILLARTAG, game.Pillar);
-                pillar.init(this.lastXpos, this.pillarYPos, haveTrap);
-                pillar.zOrder = 1;
+                var haveCoin = false;
+                if (this.roadArray.length > 8 && !haveTrap) {
+                    if (Math.random() > 0.6) {
+                        haveCoin = true;
+                    }
+                }
+                pillar.init(this.lastXpos, this.pillarYPos, haveCoin, haveTrap);
                 this.sp_map.addChild(pillar);
                 this.pillarArray.push(pillar);
                 item.pillar = pillar;
@@ -390,7 +401,7 @@ var game;
                 var frogY = this.frog.getRealPosY();
                 if (frogY <= this.pillarYPos - 4 && !this.havePlayBlast) {
                     this.havePlayBlast = true;
-                    utl.MusicSoundTool.playSound(def.MusicConfig.CommonSound.blast);
+                    this.frog.playBlastSound();
                 }
             }
             if (this.pillarArray.length) {
@@ -404,7 +415,7 @@ var game;
                     }
                 }
                 var lastXpos = this.pillarArray[this.pillarArray.length - 1].x;
-                if (lastXpos <= Laya.stage.width) {
+                if (lastXpos <= Laya.stage.width + 300) {
                     this.addPillar();
                 }
             }
@@ -417,6 +428,11 @@ var game;
                     this.start();
                 }
                 var item = this.roadArray[this.roadIndex];
+                if (item.pillar.haveCoin) {
+                    item.pillar.hideCoin();
+                    this.frog.getCoin();
+                    this.setScore();
+                }
                 if (item.tag == 4) {
                     var posY = this.pillarYPos;
                     Tween.to(item.pillar, { y: posY + 100 }, 200);
@@ -429,14 +445,22 @@ var game;
                 this.frog.visible = false;
                 this.gameOver();
             }
-            this.waterAction();
         };
-        GameMainView.prototype.waterAction = function () {
-            var _this = this;
+        GameMainView.prototype.beginWaterAction = function () {
+            if (this.gameStatus != 1) {
+                return;
+            }
             var posY = Laya.stage.height - this.waterView.picHeight;
-            Tween.to(this.waterView, { y: posY + 5 }, 80, null, laya.utils.Handler.create(this, function () {
-                Tween.to(_this.waterView, { y: posY }, 80, null);
-            }));
+            Tween.clearTween(this.beginWaterAction);
+            Tween.to(this.waterView, { y: posY + 5 }, 500, null, Handler.create(this, this.onTween1));
+        };
+        GameMainView.prototype.onTween1 = function () {
+            if (this.gameStatus != 1) {
+                return;
+            }
+            var posY = Laya.stage.height - this.waterView.picHeight;
+            Tween.clearTween(this.onTween1);
+            Tween.to(this.waterView, { y: posY }, 500, null, Handler.create(this, this.beginWaterAction));
         };
         return GameMainView;
     }(ui.game.GameMainUI));

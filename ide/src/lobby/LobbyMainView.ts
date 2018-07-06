@@ -105,7 +105,7 @@ namespace lobby {
                 button.visible = true;
             })
 
-            //5秒后可以进入游戏
+            //3秒后可以进入游戏
             let countDown = 3;
             Laya.timer.loop(1000, this, () => {  //倒计时
                 countDown--;

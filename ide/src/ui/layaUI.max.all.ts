@@ -11,7 +11,9 @@ module ui.comp {
         
             super.createChildren();
             this.createView(ui.comp.LabelScaleAniUI.uiView);
+
         }
+
     }
 }
 
@@ -25,7 +27,9 @@ module ui.game {
         
             super.createChildren();
             this.createView(ui.game.FrogJumpUI.uiView);
+
         }
+
     }
 }
 
@@ -49,7 +53,9 @@ module ui.game {
         
             super.createChildren();
             this.createView(ui.game.FrogViewUI.uiView);
+
         }
+
     }
 }
 
@@ -74,7 +80,9 @@ module ui.game {
         
             super.createChildren();
             this.createView(ui.game.GameMainUI.uiView);
+
         }
+
     }
 }
 
@@ -107,7 +115,9 @@ module ui.game {
         
             super.createChildren();
             this.createView(ui.game.GameOverUI.uiView);
+
         }
+
     }
 }
 
@@ -120,6 +130,8 @@ module ui.lobby {
         
             super.createChildren();
             this.createView(ui.lobby.LobbyMainUI.uiView);
+
         }
+
     }
 }

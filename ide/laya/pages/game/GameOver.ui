@@ -315,19 +315,6 @@
                         {
                             "x":45,
                             "type":"Label",
-                            "props":{"width":198,"var":"label_get","top":54,"text":"得分","left":20,"height":78,"fontSize":78,"font":"黑体","color":"#ffffff","bold":true},
-                            "nodeParent":40,
-                            "label":"Label(label_get)",
-                            "isDirectory":false,
-                            "isAniNode":true,
-                            "hasChild":false,
-                            "compId":20,
-                            "child":[
-                                ]
-                        },
-                        {
-                            "x":45,
-                            "type":"Label",
                             "props":{"var":"label_score","top":64,"text":"0","left":260,"fontSize":60,"font":"黑体","color":"#ffffff","align":"left"},
                             "nodeParent":40,
                             "label":"Label(label_score)",
@@ -341,9 +328,9 @@
                         {
                             "x":45,
                             "type":"Label",
-                            "props":{"width":198,"top":200,"text":"历史最高","left":20,"fontSize":50,"font":"黑体","color":"#ffffff","bold":true},
+                            "props":{"width":198,"var":"label_history","top":200,"left":20,"fontSize":50,"font":"黑体","color":"#ffffff","bold":true},
                             "nodeParent":40,
-                            "label":"Label",
+                            "label":"Label(label_history)",
                             "isDirectory":false,
                             "isAniNode":true,
                             "hasChild":false,
@@ -370,6 +357,7 @@
                             "props":{"y":166,"x":229,"visible":false,"var":"img_new","skin":"frog/new.png"},
                             "nodeParent":40,
                             "label":"Image(img_new)",
+                            "isOpen":true,
                             "isDirectory":false,
                             "isAniNode":true,
                             "hasChild":false,
@@ -380,9 +368,10 @@
                         {
                             "x":45,
                             "type":"Image",
-                            "props":{"var":"btn_agin","skin":"frog/imgAgin.png","centerY":167,"centerX":0},
+                            "props":{"var":"btn_agin","centerY":167,"centerX":0},
                             "nodeParent":40,
                             "label":"Image(btn_agin)",
+                            "isOpen":true,
                             "isDirectory":false,
                             "isAniNode":true,
                             "hasChild":false,
@@ -393,9 +382,10 @@
                         {
                             "x":45,
                             "type":"Image",
-                            "props":{"var":"btn_ad","skin":"frog/adAgin.png","centerY":30,"centerX":0},
+                            "props":{"var":"btn_ad","centerY":30,"centerX":0},
                             "nodeParent":40,
                             "label":"Image(btn_ad)",
+                            "isOpen":true,
                             "isDirectory":false,
                             "isAniNode":true,
                             "hasChild":false,
@@ -406,7 +396,7 @@
                         {
                             "x":45,
                             "type":"Image",
-                            "props":{"visible":true,"var":"btn_backMain","skin":"frog/backMain.png","centerX":0,"bottom":18},
+                            "props":{"visible":true,"var":"btn_backMain","centerX":0,"bottom":18},
                             "nodeParent":40,
                             "label":"Image(btn_backMain)",
                             "isDirectory":false,
@@ -415,6 +405,20 @@
                             "compId":47,
                             "child":[
                                 ]
+                        },
+                        {
+                            "x":45,
+                            "type":"Label",
+                            "props":{"y":54,"x":20,"width":198,"var":"label_get","top":54,"left":20,"height":78,"fontSize":78,"font":"黑体","color":"#ffffff","bold":true},
+                            "nodeParent":40,
+                            "label":"Label(label_get)",
+                            "isDirectory":false,
+                            "isAniNode":true,
+                            "hasChild":false,
+                            "compId":20,
+                            "child":[
+                                ],
+                            "$LOCKED":true
                         }],
                     "$LOCKED":true
                 }]

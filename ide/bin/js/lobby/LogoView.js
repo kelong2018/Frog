@@ -19,16 +19,19 @@ var lobby;
         function LogoView() {
             var _this = _super.call(this) || this;
             _this.index = 0;
+            _this.countDown = 3;
             _this.size(Laya.stage.width, Laya.stage.height);
             _this.color = "#ffffff";
-            var logo = new Image("frog/logo.png");
+            var logo = new Image("frog/logo.jpg");
+            var rate = logo.height / logo.width;
+            logo.width = Laya.stage.width;
+            logo.height = logo.width * rate;
             logo.centerX = 0;
             logo.centerY = 0;
             _this.addChild(logo);
-            var countDown = 3;
             Laya.timer.loop(1000, _this, function () {
-                countDown--;
-                if (countDown < 0) {
+                _this.countDown--;
+                if (_this.countDown < 1) {
                     Laya.timer.clearAll(_this);
                     Tween.to(logo, { opacity: 0.2 }, 800, null, Handler.create(_this, function () {
                         _this.beginGame();
@@ -38,9 +41,11 @@ var lobby;
             return _this;
         }
         LogoView.prototype.beginGame = function () {
-            var lobby = new lobby_1.LobbyMainView();
-            Laya.stage.addChild(lobby);
-            this.clear();
+            if (this.countDown < 1 && this.ready) {
+                var lobby_2 = new lobby_1.LobbyMainView();
+                Laya.stage.addChild(lobby_2);
+                this.clear();
+            }
         };
         LogoView.prototype.clear = function () {
             Laya.loader.clearRes("frog/logo.png");

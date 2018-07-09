@@ -9,7 +9,7 @@ namespace def.MusicConfig {
         jump: "jump",  //跳
         eat: "eat" //吃金币
     }
-
+ 
     export function initMusic(type) {
         for(var m in CommonMusic) {
             CommonMusic[m] = "music/" + type + "/" + CommonMusic[m] + "." + type;

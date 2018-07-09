@@ -5,26 +5,31 @@ namespace kelong.ui {
     import Sprite = Laya.Sprite;
 
     export class KColorButton extends Box {
-        constructor(txt) {
+
+        label: Label;
+
+        constructor(w, h, fontSize, color, txt) {
             super();
 
-            this.size(240, 67);
+            this.size(w, h);
+            this.anchorX = 0.5;
+            this.anchorY = 0.5;
             let sp_bg = new Sprite;
             sp_bg.graphics.drawRect(0, 0, this.width, this.height, "#000000");
-            sp_bg.alpha = 0.1;
+            sp_bg.alpha = 0.2;
             this.addChild(sp_bg);
             let sp_line = new Sprite;
-            sp_line.graphics.drawLines(0, 0, [0, 0, this.width, 0, this.width, this.height, 0, this.height, 0, 0], "#ffffff", 2);
+            sp_line.graphics.drawLines(0, 0, [0, 0, this.width, 0, this.width, this.height, 0, this.height, 0, 0], color, 2);
             this.addChild(sp_line);
 
-            let label = new Label(txt);
-            label.font = "黑体";
-            label.color = "#ffffff";
-            label.fontSize = 48;
-            label.bold = true;
-            label.centerX = 0;
-            label.centerY = 0;
-            this.addChild(label);
+            this.label = new Label(txt);
+            this.label.font = "黑体";
+            this.label.color = color;
+            this.label.fontSize = fontSize;
+            this.label.bold = true;
+            this.label.centerX = 0;
+            this.label.centerY = 0;
+            this.addChild(this.label);
             
             this.on(Event.MOUSE_OUT, this, () => {
                 this.scale(1, 1);
@@ -35,6 +40,10 @@ namespace kelong.ui {
             this.on(Event.MOUSE_UP, this, () => {
                 this.scale(1, 1);
             });
+        }
+        //设置文字
+        setLabel(str) {
+            this.label.text = str;
         }
     }
 }

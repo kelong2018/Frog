@@ -32,7 +32,7 @@ namespace game {
         haveNullBefore;      //前边有空柱子
         speedAddTag = 0;        //游戏速度加速次数标记
         gameSpeed;  //游戏速度
-        
+
         pillarYPos;
         //场景
         //背景
@@ -191,7 +191,7 @@ namespace game {
                 this.label_jump.ani_play.stop();
             }
             this.score++;
-            this.label_score.text = "分数: " + this.score;
+            this.label_score.text = def.getLanguageStr(def.LanguageConfig.Keys.SCORE1) + this.score;
         }
 
         //开始
@@ -305,6 +305,12 @@ namespace game {
             this.sp_tips.graphics.drawRect(0, 0, this.width, this.height, "#000000");
             this.sp_white.graphics.drawRect(0, 0, this.width, this.height, "#ffffff");
 
+            //操作提示文字
+            this.label_op1.text = def.getLanguageStr(def.LanguageConfig.Keys.OPERATE)
+            this.label_opRight.text = def.getLanguageStr(def.LanguageConfig.Keys.JUMPSMALL)
+            this.label_opUp.text = def.getLanguageStr(def.LanguageConfig.Keys.JUMPUP)
+            this.label_opEasy.text = def.getLanguageStr(def.LanguageConfig.Keys.EASY)
+            this.label_opClick.text = def.getLanguageStr(def.LanguageConfig.Keys.CLICK_BEGIN)
             this.box_tips.on(Laya.Event.CLICK, this, () => {
                 this.box_labels.visible = false;
                 this.box_tips.visible = false;
@@ -313,6 +319,7 @@ namespace game {
             });
 
             this.label_jump = new ui.comp.LabelScaleAniUI;
+            this.label_jump.label_s.text = def.getLanguageStr(def.LanguageConfig.Keys.JUMP);
             this.sp_map.addChild(this.label_jump);
             this.label_jump.visible = false;
 
@@ -330,7 +337,7 @@ namespace game {
             this.addChild(this.frog);
             // this.sp_map.addChild(this.frog);
             this.lastXpos = this.BEGINXPOS;
-            this.label_score.text = "分数: " + this.score;
+            this.label_score.text = def.getLanguageStr(def.LanguageConfig.Keys.SCORE1) + this.score;
             this.gameSpeed = GameConfig.SPEED;
             this.frog.initPos(this.lastXpos, this.pillarYPos);
             this.frog.playAction(FrogJumpView.ACTIONS.stand);
@@ -366,8 +373,8 @@ namespace game {
                 let haveTrap = this.pillarShowArray[this.pillarIndex] == 3;
                 let pillar: Pillar = Laya.Pool.getItemByClass(Pillar.PILLARTAG, Pillar);
                 let haveCoin = false;
-                if(this.roadArray.length > 8 && !haveTrap) {
-                    if(Math.random() > 0.6) {
+                if (this.roadArray.length > 8 && !haveTrap) {
+                    if (Math.random() > 0.6) {
                         haveCoin = true;
                     }
                 }
@@ -463,7 +470,7 @@ namespace game {
                     this.start();
                 }
                 let item = this.roadArray[this.roadIndex]
-                if(item.pillar.haveCoin) {
+                if (item.pillar.haveCoin) {
                     item.pillar.hideCoin();
                     this.frog.getCoin();
                     this.setScore();
@@ -483,15 +490,15 @@ namespace game {
         }
 
         beginWaterAction() {
-            if(this.gameStatus != 1) {
+            if (this.gameStatus != 1) {
                 return;
             }
-            let posY = Laya.stage.height - this.waterView.picHeight;            
+            let posY = Laya.stage.height - this.waterView.picHeight;
             Tween.clearTween(this.beginWaterAction);
             Tween.to(this.waterView, { y: posY + 5 }, 500, null, Handler.create(this, this.onTween1));
         }
         onTween1() {
-            if(this.gameStatus != 1) {
+            if (this.gameStatus != 1) {
                 return;
             }
             let posY = Laya.stage.height - this.waterView.picHeight;

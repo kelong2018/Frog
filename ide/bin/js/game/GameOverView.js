@@ -11,7 +11,6 @@ var __extends = (this && this.__extends) || (function () {
 var game;
 (function (game) {
     var Event = Laya.Event;
-    var KColorButton = kelong.ui.KColorButton;
     var Storage = laya.net.LocalStorage;
     var GameOverView = /** @class */ (function (_super) {
         __extends(GameOverView, _super);
@@ -34,6 +33,11 @@ var game;
             _this.box_listBg.graphics.drawRect(0, 0, _this.box_listBg.width, _this.box_listBg.height, "#cdffe3");
             _this.sp_rect.graphics.drawLines(0, 0, [2, 2, _this.box_list.width - 4, 2, _this.box_list.width - 4, _this.box_list.height - 4, 2, _this.box_list.height - 4, 2, 2], "#010303", 4);
             _this.sp_rect.graphics.drawLines(0, 0, [0, 0, _this.box_list.width, 0, _this.box_list.width, _this.box_list.height, 0, _this.box_list.height, 0, 0], "#ffffff", 2);
+            _this.label_get.text = def.getLanguageStr(def.LanguageConfig.Keys.SCORE2);
+            _this.label_history.text = def.getLanguageStr(def.LanguageConfig.Keys.HISTORY);
+            _this.btn_agin.skin = def.getSource("imgAgin.png");
+            _this.btn_ad.skin = def.getSource("adAgin.png");
+            _this.btn_backMain.skin = def.getSource("backMain.png");
             _this.label_score.text = score;
             if (score > def.GameConfig.MYSCORE) {
                 _this.label_high.text = score + "";
@@ -107,16 +111,16 @@ var game;
             _this.box_my.graphics.drawCircle(_this.box_my.width - 20, _this.box_my.height - 40, 20, "#8dc9a5");
             _this.box_my.graphics.drawRect(20, _this.box_my.height - 60, _this.box_my.width - 40, 40, "#8dc9a5");
             _this.list.vScrollBarSkin = "";
-            //排行
-            _this.btn_rank = new KColorButton("排行总榜");
-            _this.btn_rank.visible = false;
-            _this.btn_rank.centerX = 0;
-            _this.btn_rank.centerY = 40;
-            _this.addChild(_this.btn_rank);
-            _this.btn_rank.on("click", _this, function () {
-                _this.showRank();
-            });
             return _this;
+            //排行
+            // this.btn_rank = new KColorButton("排行总榜");
+            // this.btn_rank.visible = false;
+            // this.btn_rank.centerX = 0;
+            // this.btn_rank.centerY = 40;
+            // this.addChild(this.btn_rank);
+            // this.btn_rank.on("click", this, () => {
+            //     this.showRank();
+            // });
         }
         GameOverView.prototype.storageScore = function (score) {
             if (score > def.GameConfig.MYSCORE) {

@@ -1,14 +1,21 @@
 D .
-D frog
-P C2880138 +1.png
+D ch
 P 10996112 adAgin.png
 P 275F2322 backMain.png
-R 782DB96F bg.png
 P 83004C91 button_begin.png
-P AFC788B8 closeButton.png
 R AD169095 ha.png
-P 18A12C16 img_tip.png
 P D7361DBD imgAgin.png
+D en
+P 14DB510F adAgin.png
+P 398AA088 backMain.png
+P DB74C4A4 button_begin.png
+R DC141C65 ha.png
+P 8AA13C55 imgAgin.png
+D frog
+P C2880138 +1.png
+R 782DB96F bg.png
+P AFC788B8 closeButton.png
+P 18A12C16 img_tip.png
 R BC3E09A1 logo.jpg
 P AEA158D4 new.png
 R 26400FFC overBg.png

@@ -1,6 +1,8 @@
 import LogoView = lobby.LogoView;
-// import LobbyMain = lobby.LobbyMainView;
+import LobbyMain = lobby.LobbyMainView;
 import Stage = Laya.Stage;
+import AppInit = utl.AppInit;
+import LangConfig = def.LanguageConfig;
 
 Laya.init(640, 960, Laya.WebGL);
 // 设置适配模式
@@ -11,16 +13,28 @@ Laya.stage.screenMode = Stage.SCREEN_VERTICAL;
 
 //显示FPS
 // Laya.Stat.show(0, 50);
-//配置音乐
-if(Laya.Browser.onAndriod || Laya.Browser.onIOS) {
-    def.MusicConfig.initMusic("ogg");
-} else {
-    def.MusicConfig.initMusic("mp3");
+AppInit.init();
+
+let lanSource = def.SourceConfig.gameSourceCh;
+if (LangConfig.Lang == LangConfig.Langs.en) {
+    lanSource = def.SourceConfig.gameSourceEn;
 }
 
-let asset = def.SourceConfig.lobbySource.concat(def.SourceConfig.gameSource);
+// let logoView = null;
+// let assetLogo = def.SourceConfig.logoSource;
+// Laya.loader.load(assetLogo, new Laya.Handler(this, () => {
+//     assetLogo = null;
+//     logoView = new LogoView;
+//     Laya.stage.addChild(logoView);
+// }));
+
+let asset = def.SourceConfig.lobbySource.concat(def.SourceConfig.gameSourceCommon).concat(lanSource);
 Laya.loader.load(asset, new Laya.Handler(this, () => {
     asset = null;
-    let logoView = new LogoView;
-    Laya.stage.addChild(logoView);
+    // if(logoView) {
+    //     logoView.ready = true;
+    //     logoView.beginGame();
+    // }    
+    let lobby = new LobbyMain;
+    Laya.stage.addChild(lobby);
 }));

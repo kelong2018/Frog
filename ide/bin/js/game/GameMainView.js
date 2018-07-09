@@ -168,7 +168,7 @@ var game;
                 this.label_jump.ani_play.stop();
             }
             this.score++;
-            this.label_score.text = "分数: " + this.score;
+            this.label_score.text = def.getLanguageStr(def.LanguageConfig.Keys.SCORE1) + this.score;
         };
         //开始
         GameMainView.prototype.start = function () {
@@ -275,6 +275,12 @@ var game;
             this.stoneView.y = this.waterView.y + 8 - 62;
             this.sp_tips.graphics.drawRect(0, 0, this.width, this.height, "#000000");
             this.sp_white.graphics.drawRect(0, 0, this.width, this.height, "#ffffff");
+            //操作提示文字
+            this.label_op1.text = def.getLanguageStr(def.LanguageConfig.Keys.OPERATE);
+            this.label_opRight.text = def.getLanguageStr(def.LanguageConfig.Keys.JUMPSMALL);
+            this.label_opUp.text = def.getLanguageStr(def.LanguageConfig.Keys.JUMPUP);
+            this.label_opEasy.text = def.getLanguageStr(def.LanguageConfig.Keys.EASY);
+            this.label_opClick.text = def.getLanguageStr(def.LanguageConfig.Keys.CLICK_BEGIN);
             this.box_tips.on(Laya.Event.CLICK, this, function () {
                 _this.box_labels.visible = false;
                 _this.box_tips.visible = false;
@@ -282,6 +288,7 @@ var game;
                 _this.label_jump.ani_play.play(0, true);
             });
             this.label_jump = new ui.comp.LabelScaleAniUI;
+            this.label_jump.label_s.text = def.getLanguageStr(def.LanguageConfig.Keys.JUMP);
             this.sp_map.addChild(this.label_jump);
             this.label_jump.visible = false;
             this.initGoods();
@@ -297,7 +304,7 @@ var game;
             this.addChild(this.frog);
             // this.sp_map.addChild(this.frog);
             this.lastXpos = this.BEGINXPOS;
-            this.label_score.text = "分数: " + this.score;
+            this.label_score.text = def.getLanguageStr(def.LanguageConfig.Keys.SCORE1) + this.score;
             this.gameSpeed = GameConfig.SPEED;
             this.frog.initPos(this.lastXpos, this.pillarYPos);
             this.frog.playAction(game.FrogJumpView.ACTIONS.stand);

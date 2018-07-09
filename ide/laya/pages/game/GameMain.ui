@@ -1,8 +1,8 @@
 {
     "x":0,
     "type":"View",
-    "selectedBox":1,
-    "selecteID":19,
+    "selectedBox":16,
+    "selecteID":16,
     "props":{"sceneWidth":640,"sceneHeight":960,"sceneColor":"#000000"},
     "nodeParent":-1,
     "label":"View",
@@ -110,7 +110,7 @@
                 {
                     "x":30,
                     "type":"Label",
-                    "props":{"var":"label_score","text":"分数: 0","left":16,"fontSize":36,"font":"黑体","color":"#ffffff","centerY":0,"bold":true,"align":"left"},
+                    "props":{"var":"label_score","left":16,"fontSize":36,"font":"黑体","color":"#ffffff","centerY":0,"bold":true,"align":"left"},
                     "nodeParent":28,
                     "label":"Label(label_score)",
                     "isDirectory":false,
@@ -128,13 +128,14 @@
             "props":{"var":"box_tips","top":0,"right":0,"left":0,"bottom":0},
             "nodeParent":1,
             "label":"Box(box_tips)",
-            "isOpen":false,
+            "isOpen":true,
             "isDirectory":true,
             "isAniNode":true,
             "hasChild":true,
             "compId":9,
             "child":[
                 {
+                    "x":30,
                     "type":"Sprite",
                     "props":{"var":"sp_tips","alpha":0.5},
                     "nodeParent":9,
@@ -148,6 +149,7 @@
                         ]
                 },
                 {
+                    "x":30,
                     "type":"Sprite",
                     "props":{"y":0,"x":0,"var":"sp_white","alpha":0},
                     "nodeParent":9,
@@ -159,6 +161,7 @@
                     "compId":24,
                     "child":[
                         {
+                            "x":45,
                             "type":"Rect",
                             "props":{"y":0,"x":0,"width":642,"lineWidth":1,"height":961,"fillColor":"#ffffff"},
                             "nodeParent":24,
@@ -172,6 +175,7 @@
                         }]
                 },
                 {
+                    "x":30,
                     "type":"Box",
                     "props":{"var":"box_labels","top":0,"right":0,"left":0,"bottom":0},
                     "nodeParent":9,
@@ -183,10 +187,11 @@
                     "compId":23,
                     "child":[
                         {
+                            "x":45,
                             "type":"Label",
-                            "props":{"y":-115,"x":-76,"text":"滑动操作","fontSize":50,"font":"黑体","color":"#ffffff","centerY":-200,"centerX":0,"bold":true},
+                            "props":{"y":-115,"x":-76,"var":"label_op1","fontSize":50,"font":"黑体","color":"#ffffff","centerY":-200,"centerX":0,"bold":true},
                             "nodeParent":23,
-                            "label":"Label",
+                            "label":"Label(label_op1)",
                             "isDirectory":false,
                             "isAniNode":true,
                             "hasChild":false,
@@ -196,10 +201,11 @@
                             "$LOCKED":true
                         },
                         {
+                            "x":45,
                             "type":"Label",
-                            "props":{"y":-115,"x":-76,"text":"向右小跳","fontSize":50,"font":"黑体","color":"#ffffff","centerY":-100,"centerX":0,"bold":true},
+                            "props":{"y":-115,"x":-76,"var":"label_opRight","fontSize":50,"font":"黑体","color":"#ffffff","centerY":-100,"centerX":0,"bold":true},
                             "nodeParent":23,
-                            "label":"Label",
+                            "label":"Label(label_opRight)",
                             "isDirectory":false,
                             "isAniNode":true,
                             "hasChild":false,
@@ -209,10 +215,11 @@
                             "$LOCKED":true
                         },
                         {
+                            "x":45,
                             "type":"Label",
-                            "props":{"y":-115,"x":-76,"text":"向上大跳","fontSize":50,"font":"黑体","color":"#ffffff","centerY":0,"centerX":0,"bold":true},
+                            "props":{"y":-115,"x":-76,"var":"label_opUp","fontSize":50,"font":"黑体","color":"#ffffff","centerY":0,"centerX":0,"bold":true},
                             "nodeParent":23,
-                            "label":"Label",
+                            "label":"Label(label_opUp)",
                             "isDirectory":false,
                             "isAniNode":true,
                             "hasChild":false,
@@ -222,10 +229,11 @@
                             "$LOCKED":true
                         },
                         {
+                            "x":45,
                             "type":"Label",
-                            "props":{"y":-115,"x":-76,"text":"非常简单","fontSize":50,"font":"黑体","color":"#ffffff","centerY":100,"centerX":0,"bold":true},
+                            "props":{"y":-115,"x":-76,"var":"label_opEasy","fontSize":50,"font":"黑体","color":"#ffffff","centerY":100,"centerX":0,"bold":true},
                             "nodeParent":23,
-                            "label":"Label",
+                            "label":"Label(label_opEasy)",
                             "isDirectory":false,
                             "isAniNode":true,
                             "hasChild":false,
@@ -235,10 +243,11 @@
                             "$LOCKED":true
                         },
                         {
+                            "x":45,
                             "type":"Label",
-                            "props":{"y":-115,"x":-76,"text":"点击屏幕开始游戏","fontSize":42,"font":"黑体","color":"#ffffff","centerX":0,"bottom":140},
+                            "props":{"y":-115,"x":-76,"var":"label_opClick","fontSize":42,"font":"黑体","color":"#ffffff","centerX":0,"bottom":140},
                             "nodeParent":23,
-                            "label":"Label",
+                            "label":"Label(label_opClick)",
                             "isDirectory":false,
                             "isAniNode":true,
                             "hasChild":false,

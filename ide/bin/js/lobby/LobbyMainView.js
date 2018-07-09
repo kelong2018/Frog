@@ -17,12 +17,13 @@ var lobby;
     var Label = Laya.Label;
     var Event = Laya.Event;
     var Storage = laya.net.LocalStorage;
+    var KColorButton = kelong.ui.KColorButton;
+    var LangConfig = def.LanguageConfig;
     var LobbyMainView = /** @class */ (function (_super) {
         __extends(LobbyMainView, _super);
         function LobbyMainView() {
             var _this = _super.call(this) || this;
             _this.index = 0;
-            _this.a = false;
             _this.color = "#3584fb";
             _this.size(Laya.stage.width, Laya.stage.height);
             _this.graphics.drawRect(0, 0, _this.width, _this.height, _this.color);
@@ -47,72 +48,101 @@ var lobby;
             bg.bottom = 0;
             bg.width = this.width;
             this.addChild(bg);
-            var ha = new Image("frog/ha.png");
-            ha.bottom = 0;
-            var rate = this.width / ha.width;
-            ha.scale(rate, rate);
-            this.addChild(ha);
+            this.ha = new Image();
+            this.ha.skin = def.getSource("ha.png");
+            this.ha.bottom = 0;
+            var rate = this.width / this.ha.width;
+            this.ha.scale(rate, rate);
+            this.addChild(this.ha);
+            //语言切换
+            var langStr = def.getLanguageStr(def.LanguageConfig.Keys.LANGUAGE);
+            //语言设置
+            this.setBtn = new KColorButton(100, 50, 25, "#e6755b", langStr);
+            this.setBtn.top = 100;
+            this.setBtn.right = 30;
+            this.setBtn.on(Event.CLICK, this, function () {
+                var value = "ch";
+                if (LangConfig.Lang == LangConfig.Langs.ch) {
+                    value = "en";
+                }
+                Storage.setItem("language", value);
+                // Browser.window.location.reload(); //重启(bug)
+                LangConfig.Lang = value;
+                _this.setLanguage();
+            });
+            this.addChild(this.setBtn);
             if (def.GameConfig.MYSCORE > 0) {
-                var tip = new Image("frog/img_tip.png");
-                tip.top = 0;
-                tip.centerX = 0;
-                tip.width = 490;
-                this.addChild(tip);
-                var rank = new Label("在做成功蛤的道路上超越了全世界" + this.getRanck() + "的蛤");
-                rank.font = "黑体";
-                rank.fontSize = 24;
-                rank.color = "#ffffff";
-                rank.centerX = 0;
-                rank.centerY = 0;
-                tip.addChild(rank);
+                this.tip = new Image("frog/img_tip.png");
+                this.tip.top = 0;
+                this.tip.centerX = 0;
+                this.tip.width = 490;
+                if (def.LanguageConfig.Lang == def.LanguageConfig.Langs.en) {
+                    this.tip.width = 520;
+                }
+                this.addChild(this.tip);
+                var str = def.getLanguageStr(LangConfig.Keys.RANK) + this.getRanck() + def.getLanguageStr(LangConfig.Keys.RANK1);
+                this.rank = new Label(str);
+                this.rank.font = "黑体";
+                this.rank.fontSize = 24;
+                this.rank.color = "#ffffff";
+                this.rank.centerX = 0;
+                this.rank.centerY = 0;
+                this.tip.addChild(this.rank);
             }
-            var button = new Image("frog/button_begin.png");
-            button.centerX = 0;
-            button.y = ha.height * 0.31;
-            ha.addChild(button);
-            button.on(Event.MOUSE_OUT, this, function () {
-                button.scale(1, 1);
+            this.button = new Image();
+            this.button.skin = def.getSource("button_begin.png");
+            this.button.anchorX = 0.5;
+            this.button.anchorY = 0.5;
+            this.button.centerX = 0;
+            this.button.y = this.ha.height * 0.36;
+            this.ha.addChild(this.button);
+            this.button.on(Event.MOUSE_OUT, this, function () {
+                _this.button.scale(1, 1);
             });
-            button.on(Event.MOUSE_DOWN, this, function () {
-                button.scale(0.9, 0.9);
+            this.button.on(Event.MOUSE_DOWN, this, function () {
+                _this.button.scale(0.9, 0.9);
             });
-            button.on(Event.MOUSE_UP, this, function () {
-                button.scale(1, 1);
+            this.button.on(Event.MOUSE_UP, this, function () {
+                _this.button.scale(1, 1);
             });
-            button.on(Event.CLICK, this, this.beginGame);
+            this.button.on(Event.CLICK, this, this.beginGame);
             var frog = new Frog;
             frog.centerX = 0;
-            frog.y = button.y - 200;
+            frog.y = this.button.y - 240;
             frog.scale(2.5, 2.5);
             frog.jump.play(0, true);
-            ha.addChild(frog);
+            this.ha.addChild(frog);
             this.label_loading = new Label;
-            this.label_loading.text = "加载中...";
+            this.label_loading.text = def.getLanguageStr(LangConfig.Keys.LOADING);
             this.label_loading.font = "黑体";
             this.label_loading.bold = true;
             this.label_loading.color = "#e6755b";
             this.label_loading.centerX = 0;
-            this.label_loading.y = button.y + 20;
+            this.label_loading.y = this.button.y + 20;
             this.label_loading.fontSize = 40;
-            ha.addChild(this.label_loading);
+            this.ha.addChild(this.label_loading);
+            this.showAd();
+        };
+        LobbyMainView.prototype.showAd = function () {
+            var _this = this;
             //广告加载后方可进入游戏          
             this.label_loading.visible = true;
-            button.visible = false;
+            this.button.visible = false;
             utl.ThirdSdk.bannerAD(true, function (json) {
                 console.log("======>>>>>> bannerAd back : " + json);
                 var val = JSON.parse(json);
                 console.log(val.ret);
                 _this.label_loading.visible = false;
-                button.visible = true;
+                _this.button.visible = true;
             });
-            //5秒后可以进入游戏
+            //3秒后可以进入游戏
             var countDown = 3;
             Laya.timer.loop(1000, this, function () {
                 countDown--;
                 if (countDown < 0) {
                     Laya.timer.clearAll(_this);
                     _this.label_loading.visible = false;
-                    button.visible = true;
+                    _this.button.visible = true;
                 }
             });
         };
@@ -129,6 +159,40 @@ var lobby;
             if (score != null && score != "") {
                 def.GameConfig.MYSCORE = parseInt(score);
             }
+        };
+        LobbyMainView.prototype.setView = function () {
+            this.ha.skin = def.getSource("ha.png");
+            if (def.GameConfig.MYSCORE > 0) {
+                this.tip.width = 490;
+                if (def.LanguageConfig.Lang == def.LanguageConfig.Langs.en) {
+                    this.tip.width = 520;
+                }
+                this.rank.text = def.getLanguageStr(LangConfig.Keys.RANK) + this.getRanck() + def.getLanguageStr(LangConfig.Keys.RANK1);
+            }
+            this.button.skin = def.getSource("button_begin.png");
+            this.setBtn.setLabel(def.getLanguageStr(def.LanguageConfig.Keys.LANGUAGE));
+            this.label_loading.text = def.getLanguageStr(LangConfig.Keys.LOADING);
+        };
+        LobbyMainView.prototype.setLanguage = function () {
+            var _this = this;
+            var lanSource = def.SourceConfig.gameSourceEn;
+            var nenSource = def.SourceConfig.gameSourceCh;
+            if (LangConfig.Lang == LangConfig.Langs.en) {
+                lanSource = def.SourceConfig.gameSourceCh;
+                nenSource = def.SourceConfig.gameSourceEn;
+            }
+            var logo = new lobby.LogoView;
+            this.addChild(logo);
+            for (var i = 0; i < lanSource.length; ++i) {
+                Laya.loader.clearRes(lanSource[i].url);
+            }
+            Laya.loader.load(nenSource, new Laya.Handler(this, function () {
+                nenSource = null;
+                _this.setView();
+                _this.showAd();
+                logo.removeSelf();
+                logo.destroy();
+            }));
         };
         LobbyMainView.prototype.getRanck = function () {
             // let now = new Date().getTime();

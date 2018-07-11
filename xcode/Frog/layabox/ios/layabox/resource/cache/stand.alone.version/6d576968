@@ -18,24 +18,26 @@ var kelong;
         var Sprite = Laya.Sprite;
         var KColorButton = (function (_super) {
             __extends(KColorButton, _super);
-            function KColorButton(txt) {
+            function KColorButton(w, h, fontSize, color, txt) {
                 var _this = _super.call(this) || this;
-                _this.size(240, 67);
+                _this.size(w, h);
+                _this.anchorX = 0.5;
+                _this.anchorY = 0.5;
                 var sp_bg = new Sprite;
                 sp_bg.graphics.drawRect(0, 0, _this.width, _this.height, "#000000");
-                sp_bg.alpha = 0.1;
+                sp_bg.alpha = 0.2;
                 _this.addChild(sp_bg);
                 var sp_line = new Sprite;
-                sp_line.graphics.drawLines(0, 0, [0, 0, _this.width, 0, _this.width, _this.height, 0, _this.height, 0, 0], "#ffffff", 2);
+                sp_line.graphics.drawLines(0, 0, [0, 0, _this.width, 0, _this.width, _this.height, 0, _this.height, 0, 0], color, 2);
                 _this.addChild(sp_line);
-                var label = new Label(txt);
-                label.font = "黑体";
-                label.color = "#ffffff";
-                label.fontSize = 48;
-                label.bold = true;
-                label.centerX = 0;
-                label.centerY = 0;
-                _this.addChild(label);
+                _this.label = new Label(txt);
+                _this.label.font = "黑体";
+                _this.label.color = color;
+                _this.label.fontSize = fontSize;
+                _this.label.bold = true;
+                _this.label.centerX = 0;
+                _this.label.centerY = 0;
+                _this.addChild(_this.label);
                 _this.on(Event.MOUSE_OUT, _this, function () {
                     _this.scale(1, 1);
                 });
@@ -47,6 +49,10 @@ var kelong;
                 });
                 return _this;
             }
+            //设置文字
+            KColorButton.prototype.setLabel = function (str) {
+                this.label.text = str;
+            };
             return KColorButton;
         }(Box));
         ui.KColorButton = KColorButton;

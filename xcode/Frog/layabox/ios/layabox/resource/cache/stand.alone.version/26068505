@@ -13,6 +13,8 @@ var game;
 (function (game) {
     var GameConfig = def.GameConfig;
     var Frog = game.FrogJumpView;
+    var Tween = Laya.Tween;
+    var Handler = laya.utils.Handler;
     var GameMainView = (function (_super) {
         __extends(GameMainView, _super);
         /**
@@ -23,7 +25,7 @@ var game;
             _this.BEGINXPOS = 180; //开始位置
             _this.COUNTDOWNNUM = 3; //倒计时时间
             _this.roadIndex = 0; //青蛙再路上位置
-            _this.roadArray = []; //0-没有柱子，1-正常柱子，2-有刺柱子
+            _this.roadArray = []; //1-柱子，2-没有柱子，3-柱子上有刺，4-柱子掉落
             _this.jumpToBlast = false; //要爆
             _this.havePlayBlast = false;
             _this.gameStatus = 0; //游戏状态 0--暂停中，1--进行中
@@ -33,6 +35,7 @@ var game;
             _this.score = 0; //分数
             _this.stepBig = false; //跳跃是否为大跳
             _this.speedAddTag = 0; //游戏速度加速次数标记
+            _this.play_self = false;
             ////////////////界面操作///////////////
             _this.mousePos = { time: 0, x: 0, y: 0 };
             _this.pillarYPos = Laya.stage.height - 587; // * 2 / 5;
@@ -42,6 +45,9 @@ var game;
             // this.start();
             _this.box_control.on(Laya.Event.MOUSE_DOWN, _this, _this.onMouseDown);
             _this.box_control.on(Laya.Event.MOUSE_UP, _this, _this.onMouseUp);
+            _this.label_score.on(Laya.Event.DOUBLE_CLICK, _this, function () {
+                // this.play_self = !this.play_self; //自己跳
+            });
             return _this;
             // this.label_control.on("click", this, this.gameControl);
             // this.on(Event.RESIZE, this, () => {
@@ -60,8 +66,7 @@ var game;
             //     // console.log("未进行，操作无效");
             //     return;
             // }
-            if (this.frog.inJump) {
-                // console.log("未落地，操作无效");
+            if (this.frog.inJump || this.frog.falling) {
                 return;
             }
             var endTime = new Date().valueOf();
@@ -75,68 +80,104 @@ var game;
                 if (difX < 100) {
                     return;
                 }
-                if (this.gameStatus != 1) {
-                    this.start();
-                }
-                this.stepBig = false;
-                this.score++;
-                this.gameSpeed += 0.04;
-                this.label_score.text = "分数：" + this.score;
                 this.jumpSmall();
             }
             if (angle < -Math.PI / 3 && angle > -Math.PI * 2 / 3) {
                 if (difY > -100) {
                     return;
                 }
-                if (this.gameStatus != 1) {
-                    this.start();
-                }
                 this.stepBig = true;
-                this.jumbBig();
-                this.score++;
-                this.gameSpeed += 0.04;
-                this.label_score.text = "分数：" + this.score;
+                this.jumpBig();
             }
         };
         GameMainView.prototype.jumpSmall = function () {
+            this.setGameSpeed();
+            this.setScore();
+            var nowItem = this.roadArray[this.roadIndex];
+            if (nowItem.tag == 4) {
+                this.jumpToBlast = true;
+                this.frog.playAction(game.FrogJumpView.ACTIONS.jump_up_blast);
+                return;
+            }
             this.roadIndex += 1;
-            //0-没有柱子，1-正常柱子，2-有刺柱子
-            if (this.roadArray[this.roadIndex] == 0) {
-                this.jumpToBlast = true;
-                this.frog.playAction(game.FrogJumpView.ACTIONS.jump_small_fall);
-            }
-            else if (this.roadArray[this.roadIndex] == 1) {
-                this.frog.playAction(game.FrogJumpView.ACTIONS.jump_small);
-            }
-            else {
-                this.jumpToBlast = true;
-                this.frog.playAction(game.FrogJumpView.ACTIONS.jump_small_blast);
+            //1-柱子，2-没有柱子，3-柱子上有刺，4-柱子掉落
+            var item = this.roadArray[this.roadIndex];
+            switch (item.tag) {
+                case 1:
+                    this.frog.playAction(game.FrogJumpView.ACTIONS.jump_small);
+                    break;
+                case 2:
+                    this.jumpToBlast = true;
+                    this.frog.playAction(game.FrogJumpView.ACTIONS.jump_small_fall);
+                    break;
+                case 3:
+                    this.jumpToBlast = true;
+                    this.frog.playAction(game.FrogJumpView.ACTIONS.jump_small_blast);
+                    break;
+                case 4:
+                    this.frog.falling = true;
+                    this.frog.playAction(game.FrogJumpView.ACTIONS.jump_small);
+                    break;
             }
         };
-        GameMainView.prototype.jumbBig = function () {
+        GameMainView.prototype.jumpBig = function () {
+            this.setGameSpeed();
+            this.setScore();
+            var nowItem = this.roadArray[this.roadIndex];
+            if (nowItem.tag == 4) {
+                if (Math.random() < 0.2 && !this.play_self) {
+                    this.jumpToBlast = true;
+                    this.frog.playAction(game.FrogJumpView.ACTIONS.jump_up_blast);
+                }
+                else {
+                    this.roadIndex += 1;
+                    this.frog.playAction(game.FrogJumpView.ACTIONS.jump_up);
+                }
+                return;
+            }
             this.roadIndex += 2;
-            //0-没有柱子，1-正常柱子，2-有刺柱子
-            if (this.roadArray[this.roadIndex] == 0) {
-                this.jumpToBlast = true;
-                this.frog.playAction(game.FrogJumpView.ACTIONS.jump_big_fall);
+            //1-柱子，2-没有柱子，3-柱子上有刺，4-柱子掉落
+            var item = this.roadArray[this.roadIndex];
+            switch (item.tag) {
+                case 1:
+                    this.frog.playAction(game.FrogJumpView.ACTIONS.jump_big);
+                    break;
+                case 2:
+                    this.jumpToBlast = true;
+                    this.frog.playAction(game.FrogJumpView.ACTIONS.jump_big_fall);
+                    break;
+                case 3:
+                    this.jumpToBlast = true;
+                    this.frog.playAction(game.FrogJumpView.ACTIONS.jump_big_blast);
+                    break;
+                case 4:
+                    this.frog.falling = true;
+                    this.frog.playAction(game.FrogJumpView.ACTIONS.jump_big);
+                    break;
             }
-            else if (this.roadArray[this.roadIndex] == 1) {
-                this.frog.playAction(game.FrogJumpView.ACTIONS.jump_big);
+        };
+        GameMainView.prototype.setGameSpeed = function () {
+            if (this.gameSpeed < 6) {
+                this.gameSpeed += 0.04;
+                this.frog.checkSpeed(this.gameSpeed);
             }
-            else {
-                this.jumpToBlast = true;
-                this.frog.playAction(game.FrogJumpView.ACTIONS.jump_big_blast);
+        };
+        GameMainView.prototype.setScore = function () {
+            if (this.label_jump.visible == true) {
+                this.label_jump.visible = false;
+                this.label_jump.ani_play.stop();
             }
+            this.score++;
+            this.label_score.text = def.getLanguageStr(def.LanguageConfig.Keys.SCORE1) + this.score;
         };
         //开始
         GameMainView.prototype.start = function () {
             this.gameStatus = 1;
             // this.visible = true;
             // this.label_jump.pos(this.frog.x , this.frog.y - 50);
-            utl.MusicSoundTool.playMusic(def.MusicConfig.CommonMusic.game_bg);
-            this.label_jump.visible = false;
-            this.label_jump.ani_play.stop();
             Laya.timer.frameLoop(1, this, this.onLoop);
+            this.beginWaterAction();
+            utl.MusicSoundTool.playMusic(def.MusicConfig.CommonMusic.game_bg);
         };
         //暂停
         GameMainView.prototype.pause = function () {
@@ -165,6 +206,14 @@ var game;
             //继续
             oView.on(oView.ADEND, this, function () {
                 _this.playAgin();
+            });
+            //继续
+            oView.on(oView.BACKMAIN, this, function () {
+                var lobbyMian = new lobby.LobbyMainView;
+                Laya.stage.addChild(lobbyMian);
+                _this.removeChildren();
+                _this.removeSelf();
+                _this.destroy();
             });
         };
         //再来一局
@@ -209,15 +258,29 @@ var game;
             //建筑景物
             this.buildingView = new game.RepeatImageView("frog/yuanjingcen.png");
             this.sp_map.addChild(this.buildingView);
+            //云层
+            this.cloudsView = new game.RepeatImageView("frog/yun.png");
+            this.sp_map.addChild(this.cloudsView);
+            this.cloudsView.y = 0;
+            //石头
+            this.stoneView = new game.ScrollView("frog/wuqi.png");
+            this.addChild(this.stoneView);
             //水
-            this.waterView = new game.WaterView;
+            this.waterView = new game.ScrollView("frog/shui.png");
             this.waterView.y = Laya.stage.height - this.waterView.picHeight;
             this.waterView.zOrder = this.sp_map.zOrder + 1;
             this.box_tips.zOrder = this.waterView.zOrder + 1;
             this.addChild(this.waterView);
-            this.buildingView.y = this.waterView.y - 209;
+            this.buildingView.y = this.waterView.y - 200;
+            this.stoneView.y = this.waterView.y + 8 - 62;
             this.sp_tips.graphics.drawRect(0, 0, this.width, this.height, "#000000");
             this.sp_white.graphics.drawRect(0, 0, this.width, this.height, "#ffffff");
+            //操作提示文字
+            this.label_op1.text = def.getLanguageStr(def.LanguageConfig.Keys.OPERATE);
+            this.label_opRight.text = def.getLanguageStr(def.LanguageConfig.Keys.JUMPSMALL);
+            this.label_opUp.text = def.getLanguageStr(def.LanguageConfig.Keys.JUMPUP);
+            this.label_opEasy.text = def.getLanguageStr(def.LanguageConfig.Keys.EASY);
+            this.label_opClick.text = def.getLanguageStr(def.LanguageConfig.Keys.CLICK_BEGIN);
             this.box_tips.on(Laya.Event.CLICK, this, function () {
                 _this.box_labels.visible = false;
                 _this.box_tips.visible = false;
@@ -225,6 +288,7 @@ var game;
                 _this.label_jump.ani_play.play(0, true);
             });
             this.label_jump = new ui.comp.LabelScaleAniUI;
+            this.label_jump.label_s.text = def.getLanguageStr(def.LanguageConfig.Keys.JUMP);
             this.sp_map.addChild(this.label_jump);
             this.label_jump.visible = false;
             this.initGoods();
@@ -237,9 +301,10 @@ var game;
             this.roadIndex = 0;
             this.roadArray = [];
             this.frog.on(game.FrogJumpView.ACTIONEND, this, this.frogActionOver);
-            this.sp_map.addChild(this.frog);
+            this.addChild(this.frog);
+            // this.sp_map.addChild(this.frog);
             this.lastXpos = this.BEGINXPOS;
-            this.label_score.text = "分数：" + this.score;
+            this.label_score.text = def.getLanguageStr(def.LanguageConfig.Keys.SCORE1) + this.score;
             this.gameSpeed = GameConfig.SPEED;
             this.frog.initPos(this.lastXpos, this.pillarYPos);
             this.frog.playAction(game.FrogJumpView.ACTIONS.stand);
@@ -263,33 +328,66 @@ var game;
                 this.pillarArrayIndex = ret.idx;
                 this.pillarIndex = 0;
             }
+            var item = {
+                tag: this.pillarShowArray[this.pillarIndex],
+                pillar: null
+            };
             if (this.pillarShowArray[this.pillarIndex] == 2) {
                 this.haveNullBefore = true;
-                this.roadArray.push(0);
             }
             else {
                 this.haveNullBefore = false;
                 var haveTrap = this.pillarShowArray[this.pillarIndex] == 3;
                 var pillar = Laya.Pool.getItemByClass(game.Pillar.PILLARTAG, game.Pillar);
-                pillar.init(this.lastXpos, this.pillarYPos, haveTrap);
-                pillar.zOrder = 1;
+                var haveCoin = false;
+                if (this.roadArray.length > 8 && !haveTrap) {
+                    if (Math.random() > 0.6) {
+                        haveCoin = true;
+                    }
+                }
+                pillar.init(this.lastXpos, this.pillarYPos, haveCoin, haveTrap);
                 this.sp_map.addChild(pillar);
                 this.pillarArray.push(pillar);
-                if (haveTrap) {
-                    this.roadArray.push(2);
+                item.pillar = pillar;
+            }
+            this.roadArray.push(item);
+            this.pillarIndex++;
+        };
+        GameMainView.prototype.playSelf = function () {
+            if (!this.play_self) {
+                return;
+            }
+            if (this.frog.inJump || this.frog.falling) {
+                return;
+            }
+            if (this.frog.x < this.width / 3) {
+                var nowItem = this.roadArray[this.roadIndex];
+                if (nowItem.tag == 4) {
+                    this.jumpBig();
+                    return;
+                }
+                var item = this.roadArray[this.roadIndex + 1];
+                if (item == null) {
+                    return;
+                }
+                //1-柱子，2-没有柱子，3-柱子上有刺，4-柱子掉落
+                if (item.tag == 1 || item.tag == 4) {
+                    this.jumpSmall();
                 }
                 else {
-                    this.roadArray.push(1);
+                    this.jumpBig();
                 }
             }
-            this.pillarIndex++;
         };
         //游戏循环
         GameMainView.prototype.onLoop = function () {
             //布景移动
             this.waterView.run(this.gameSpeed + 0.1);
+            this.stoneView.run(this.gameSpeed);
             this.buildingView.run(this.gameSpeed - 1);
+            this.cloudsView.run(this.gameSpeed - 2);
             this.bgView.run(this.gameSpeed - 1.5);
+            this.playSelf();
             this.frog.x -= this.gameSpeed;
             var frogX = this.frog.getRealPosX();
             //青蛙与墙壁碰撞
@@ -310,7 +408,7 @@ var game;
                 var frogY = this.frog.getRealPosY();
                 if (frogY <= this.pillarYPos - 4 && !this.havePlayBlast) {
                     this.havePlayBlast = true;
-                    utl.MusicSoundTool.playSound(def.MusicConfig.CommonSound.blast);
+                    this.frog.playBlastSound();
                 }
             }
             if (this.pillarArray.length) {
@@ -324,19 +422,52 @@ var game;
                     }
                 }
                 var lastXpos = this.pillarArray[this.pillarArray.length - 1].x;
-                if (lastXpos <= Laya.stage.width) {
+                if (lastXpos <= Laya.stage.width + 300) {
                     this.addPillar();
                 }
             }
         };
         //青蛙动作结束
         GameMainView.prototype.frogActionOver = function (eventName) {
+            var _this = this;
             if (eventName == game.FrogJumpView.EVENT_STOP) {
+                if (this.gameStatus != 1) {
+                    this.start();
+                }
+                var item = this.roadArray[this.roadIndex];
+                if (item.pillar.haveCoin) {
+                    item.pillar.hideCoin();
+                    this.frog.getCoin();
+                    this.setScore();
+                }
+                if (item.tag == 4) {
+                    var posY = this.pillarYPos;
+                    Tween.to(item.pillar, { y: posY + 100 }, 200);
+                    Tween.to(this.frog, { y: posY + 100 }, 200, null, laya.utils.Handler.create(this, function () {
+                        _this.frog.falling = false;
+                    }));
+                }
             }
             else if (eventName == game.FrogJumpView.EVENT_DIE) {
                 this.frog.visible = false;
                 this.gameOver();
             }
+        };
+        GameMainView.prototype.beginWaterAction = function () {
+            if (this.gameStatus != 1) {
+                return;
+            }
+            var posY = Laya.stage.height - this.waterView.picHeight;
+            Tween.clearTween(this.beginWaterAction);
+            Tween.to(this.waterView, { y: posY + 5 }, 500, null, Handler.create(this, this.onTween1));
+        };
+        GameMainView.prototype.onTween1 = function () {
+            if (this.gameStatus != 1) {
+                return;
+            }
+            var posY = Laya.stage.height - this.waterView.picHeight;
+            Tween.clearTween(this.onTween1);
+            Tween.to(this.waterView, { y: posY }, 500, null, Handler.create(this, this.beginWaterAction));
         };
         return GameMainView;
     }(ui.game.GameMainUI));

@@ -1,5 +1,6 @@
 #import "ViewController.h"
 #import "NativeInterface.h"
+#import "NativeDefines.h"
 #import <conchRuntime.h>
 
 @implementation ViewController
@@ -59,13 +60,13 @@ static ViewController* g_pIOSMainViewController = nil;
                        initWithAdSize:kGADAdSizeBanner];
     
     [self addBannerViewToView:self.bannerView];
-    self.bannerView.adUnitID = @"ca-app-pub-3940256099942544/2934735716";
+    self.bannerView.adUnitID = AD_BANNER_ID;
     self.bannerView.rootViewController = self;
     [self.bannerView loadRequest:[GADRequest request]];
     
     [GADRewardBasedVideoAd sharedInstance].delegate = self;
     [[GADRewardBasedVideoAd sharedInstance] loadRequest:[GADRequest request]
-                                           withAdUnitID:@"ca-app-pub-3940256099942544/1712485313"];
+                                           withAdUnitID:AD_VIDEO_ID];
 }
 
 - (void)addBannerViewToView:(UIView *)bannerView {
@@ -199,7 +200,7 @@ static ViewController* g_pIOSMainViewController = nil;
 - (void)rewardBasedVideoAdDidClose:(GADRewardBasedVideoAd *)rewardBasedVideoAd {
     NSLog(@"Reward based video ad is closed.");
     [[GADRewardBasedVideoAd sharedInstance] loadRequest:[GADRequest request]
-                                           withAdUnitID:@"ca-app-pub-3940256099942544/1712485313"];
+                                           withAdUnitID:AD_VIDEO_ID];
     [[conchRuntime GetIOSConchRuntime] callbackToJSWithClassName:@"ThirdSdk" methodName:@"videoAdd" ret:@"{\"ret\":false}"];
 }
 

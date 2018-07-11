@@ -2,6 +2,7 @@
 #import "ViewController.h"
 #import "conchRuntime.h"
 #import "Firebase.h"
+#import "NativeDefines.h"
 
 @implementation AppDelegate
 
@@ -15,9 +16,10 @@
     // Use Firebase library to configure APIs.
     [FIRApp configure];
     // Initialize the Google Mobile Ads SDK.
-//    [GADMobileAds configureWithApplicationID:@"ca-app-pub-8524804409506184~6362952359"];
-    [GADMobileAds configureWithApplicationID:@"ca-app-pub-3940256099942544~1458002511"];
-        
+    [GADMobileAds configureWithApplicationID:AD_APP_ID];
+    // test app id
+//    [GADMobileAds configureWithApplicationID:@"ca-app-pub-3940256099942544~1458002511"];
+    
     return YES;
 }
 

@@ -7,6 +7,7 @@ var def;
         GameConfig.BIGSTEP = 320;
         GameConfig.SMALLSTEP = 160;
         GameConfig.PILLARWIDTH = 160;
+        GameConfig.MYSCORE = 0;
         return GameConfig;
     }());
     def.GameConfig = GameConfig;

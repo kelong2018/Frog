@@ -8,7 +8,8 @@ var def;
         };
         MusicConfig.CommonSound = {
             blast: "did",
-            jump: "jump" //跳
+            jump: "jump",
+            eat: "eat" //吃金币
         };
         function initMusic(type) {
             for (var m in MusicConfig.CommonMusic) {

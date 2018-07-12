@@ -20,7 +20,9 @@ namespace def {
             "CLICK_BEGIN": "点击屏幕开始游戏",
             "JUMP": "跳一哈",
             "HISTORY": "历史最高",
-            "LANGUAGE": "English"
+            "LANGUAGE": "English",
+            "CLOSE": "关闭",
+            "ADLOADING": "正在加载视频...",
         }
         static en = {
             "RANK": "Toads surpass ",
@@ -35,7 +37,9 @@ namespace def {
             "CLICK_BEGIN": "Tap to begin game",
             "JUMP": "Jump",
             "HISTORY": "Highest",
-            "LANGUAGE": "中文"
+            "LANGUAGE": "中文",
+            "CLOSE": "close",
+            "ADLOADING": "Video is loading...",
         }
         static Keys = {
             RANK: "RANK",
@@ -51,6 +55,8 @@ namespace def {
             JUMP: "JUMP",
             HISTORY: "HISTORY",
             LANGUAGE: "LANGUAGE",
+            CLOSE: "CLOSE",
+            ADLOADING: "ADLOADING",
         }
     }
     export function getLanguageStr(key) {

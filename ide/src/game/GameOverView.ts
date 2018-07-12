@@ -7,6 +7,7 @@ namespace game {
     import Image = Laya.Image;
     import Browser = Laya.Browser;
     import Storage = laya.net.LocalStorage;
+    import AdLoadingView = game.AdLoadingView;
 
     export class GameOverView extends ui.game.GameOverUI {
         btn_rank: KColorButton;
@@ -16,11 +17,21 @@ namespace game {
         ADEND = "adEnd";
         BACKMAIN = "backMain";
 
+        loadView: AdLoadingView;
+
         constructor(score) {
             super();
             this.size(Laya.stage.width, Laya.stage.height);
             this.sp_bg.graphics.drawRect(0, 0, this.width, this.height, "#3485fb");
             this.list.renderHandler = new Laya.Handler(this, this.renderItem);
+
+            this.loadView = new AdLoadingView(Laya.stage.width, Laya.stage.height, "#3485fb");
+            this.loadView.on(this.loadView.CLOSEEVENT, this, ()=>{
+                this.loadView.visible = false;
+                utl.ThirdSdk.closeVideoAD();
+            })
+            this.addChild(this.loadView);
+            this.loadView.visible = false;
 
             this.storageScore(score);
             utl.ThirdSdk.bannerAD(true, (json) => {
@@ -91,6 +102,7 @@ namespace game {
                 this.btn_ad.scale(1, 1);
             });
             this.btn_ad.on(Event.CLICK, this, () => {
+                console.log("click........");
                 this.adOperator();
             });
 
@@ -138,6 +150,7 @@ namespace game {
 
         //广告
         adOperator() {
+            this.loadView.visible = true;
             utl.ThirdSdk.videoAD((json) => {
                 console.log("======>>>>>> video back : " + json);
                 let val = JSON.parse(json);
@@ -147,6 +160,8 @@ namespace game {
                 if (val.ret) {
                     this.event(this.ADEND);
                     this.clearSelf();
+                } else if(val.ret == false) {
+                    this.loadView.visible = false;
                 }
             })
         }

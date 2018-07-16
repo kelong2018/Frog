@@ -180,9 +180,10 @@ static ViewController* g_pIOSMainViewController = nil;
 - (void)rewardBasedVideoAdDidReceiveAd:(GADRewardBasedVideoAd *)rewardBasedVideoAd {
     NSLog(@"Reward based video ad is received.");
     
-//    if ([[GADRewardBasedVideoAd sharedInstance] isReady]) {
-//        [[GADRewardBasedVideoAd sharedInstance] presentFromRootViewController:self];
-//    }
+    if ([[GADRewardBasedVideoAd sharedInstance] isReady] && m_isCancelVideo == FALSE) {
+        [[GADRewardBasedVideoAd sharedInstance] presentFromRootViewController:self];
+    }
+    m_isCancelVideo == FALSE;
 }
 
 - (void)rewardBasedVideoAdDidOpen:(GADRewardBasedVideoAd *)rewardBasedVideoAd {
@@ -216,7 +217,16 @@ static ViewController* g_pIOSMainViewController = nil;
 - (void)showVideo {
     if ([[GADRewardBasedVideoAd sharedInstance] isReady]) {
         [[GADRewardBasedVideoAd sharedInstance] presentFromRootViewController:self];
+    } else {
+        [[GADRewardBasedVideoAd sharedInstance] loadRequest:[GADRequest request]
+                                                             withAdUnitID:AD_VIDEO_ID];
+//        [[conchRuntime GetIOSConchRuntime] callbackToJSWithClassName:@"ThirdSdk" methodName:@"videoAdd" ret:@"{\"ret\":false}"];
+        
     }
+}
+
+- (void)closeVideoAD {
+    m_isCancelVideo = TRUE;
 }
 
 - (void)showBanner:(bool)visible {

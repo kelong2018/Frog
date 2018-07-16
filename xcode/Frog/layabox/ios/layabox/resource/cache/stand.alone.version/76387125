@@ -12,6 +12,7 @@ var game;
 (function (game) {
     var Event = Laya.Event;
     var Storage = laya.net.LocalStorage;
+    var AdLoadingView = game.AdLoadingView;
     var GameOverView = (function (_super) {
         __extends(GameOverView, _super);
         function GameOverView(score) {
@@ -23,6 +24,13 @@ var game;
             _this.size(Laya.stage.width, Laya.stage.height);
             _this.sp_bg.graphics.drawRect(0, 0, _this.width, _this.height, "#3485fb");
             _this.list.renderHandler = new Laya.Handler(_this, _this.renderItem);
+            _this.loadView = new AdLoadingView(Laya.stage.width, Laya.stage.height, "#3485fb");
+            _this.loadView.on(_this.loadView.CLOSEEVENT, _this, function () {
+                _this.loadView.visible = false;
+                utl.ThirdSdk.closeVideoAD();
+            });
+            _this.addChild(_this.loadView);
+            _this.loadView.visible = false;
             _this.storageScore(score);
             utl.ThirdSdk.bannerAD(true, function (json) {
                 console.log("======>>>>>> bannerAd back : " + json);
@@ -90,6 +98,7 @@ var game;
                 _this.btn_ad.scale(1, 1);
             });
             _this.btn_ad.on(Event.CLICK, _this, function () {
+                console.log("click........");
                 _this.adOperator();
             });
             //返回主页
@@ -131,6 +140,7 @@ var game;
         //广告
         GameOverView.prototype.adOperator = function () {
             var _this = this;
+            this.loadView.visible = true;
             utl.ThirdSdk.videoAD(function (json) {
                 console.log("======>>>>>> video back : " + json);
                 var val = JSON.parse(json);
@@ -140,6 +150,9 @@ var game;
                 if (val.ret) {
                     _this.event(_this.ADEND);
                     _this.clearSelf();
+                }
+                else if (val.ret == false) {
+                    _this.loadView.visible = false;
                 }
             });
         };

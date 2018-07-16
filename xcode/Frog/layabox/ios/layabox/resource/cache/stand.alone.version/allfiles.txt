@@ -27,6 +27,8 @@
 /js/def/SourceConfig.js.map
 /js/def/Type.js
 /js/def/Type.js.map
+/js/game/AdLoadingView.js
+/js/game/AdLoadingView.js.map
 /js/game/FrogJumpView.js
 /js/game/FrogJumpView.js.map
 /js/game/GameMainView.js

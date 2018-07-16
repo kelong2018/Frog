@@ -34,4 +34,10 @@
 //    [[conchRuntime GetIOSConchRuntime] callbackToJSWithClass:self.class methodName:@"videoAdd" ret:@"{\"ret\":true111}"];
 }
 
++(void) closeVideoAdd
+{
+    [[ViewController GetIOSViewController] closeVideoAD];
+    
+}
+
 @end

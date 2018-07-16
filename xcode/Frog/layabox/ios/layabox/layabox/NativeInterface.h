@@ -20,5 +20,5 @@
 
 +(void) bannerAdd:(NSNumber*)show; // 只支持对象类型bool类型用NSNumber
 +(void) videoAdd; // 只支持对象类型bool类型用NSNumber
-
++(void) closeVideoAdd;
 @end

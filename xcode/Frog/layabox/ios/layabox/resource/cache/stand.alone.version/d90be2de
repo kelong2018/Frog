@@ -31,6 +31,18 @@ var utl;
                 callback(false);
             }
         };
+        /**
+         * 关闭视频
+         */
+        ThirdSdk.closeVideoAD = function () {
+            if (Laya.Browser.onIOS) {
+                var ThirdSdk = Laya.PlatformClass.createClass("ThirdSdk"); // 这个名字要与下面声明的OC的类名匹配 iOS不用包名
+                ThirdSdk.call("closeVideoAdd");
+            }
+            else {
+            }
+        };
+        ;
         ThirdSdk.onVideoResult = function (json) {
             console.log("onVideoResult ::: " + json);
         };

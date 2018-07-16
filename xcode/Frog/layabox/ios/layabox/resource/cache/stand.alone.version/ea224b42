@@ -59,6 +59,7 @@
 	<script src="js/components/ui/KColorButton.js"></script>
 	<script src="js/components/ui/KLabelButton.js"></script>
 	<script src="js/components/ui/ViewColor.js"></script>
+	<script src="js/game/AdLoadingView.js"></script>
 	<script src="js/ui/layaUI.max.all.js"></script>
 	<script src="js/game/FrogJumpView.js"></script>
 	<script src="js/game/GameMainView.js"></script>

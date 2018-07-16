@@ -13,10 +13,13 @@
     EAGLContext*                m_pGLContext;
     
     conchRuntime*               m_pConchRuntime;
+    
+    bool                        m_isCancelVideo;
 }
 +(ViewController*)GetIOSViewController;
 -(id)init;
 -(void)showVideo;
+-(void)closeVideoAD;
 -(void)showBanner:(bool)visible;
 @property (nonatomic, strong) GADBannerView *bannerView;
 

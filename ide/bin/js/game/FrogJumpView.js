@@ -23,6 +23,8 @@ var game;
             _this.speedDif = 0;
             _this.initYPos = 0;
             _this.havePlayBlast = false;
+            _this.inFly = false;
+            _this.waitLand = false; //飞行等落地
             _this.pivot(0, _this.height);
             _this.coin = new Image("frog/+1.png");
             _this.coin.visible = false;
@@ -61,6 +63,23 @@ var game;
                 _this.playBlastSound();
                 _this.event(FrogJumpView.ACTIONEND, FrogJumpView.EVENT_DIE);
             });
+            _this.jump_to_fly.on(Laya.Event.COMPLETE, _this, function () {
+                _this.playAction(FrogJumpView.ACTIONS.in_fly);
+            });
+            _this.in_fly.on(Laya.Event.COMPLETE, _this, function () {
+            });
+            _this.fly_to_land.on(Laya.Event.COMPLETE, _this, function () {
+                _this.inJump = false;
+                _this.event(FrogJumpView.ACTIONEND, FrogJumpView.EVENT_FLYEND);
+                _this.event(FrogJumpView.ACTIONEND, FrogJumpView.EVENT_STOP);
+            });
+            _this.seat_coffee.on(Laya.Event.COMPLETE, _this, function () {
+            });
+            _this.jump_to_rocket.on(Laya.Event.COMPLETE, _this, function () {
+                _this.playAction(FrogJumpView.ACTIONS.in_fly_rocket);
+            });
+            _this.in_fly_rocket.on(Laya.Event.COMPLETE, _this, function () {
+            });
             _this.actionInterval = _this.jump_small.interval;
             return _this;
         }
@@ -75,10 +94,18 @@ var game;
         FrogJumpView.prototype.getRealPosY = function () {
             return this.y + this.img_frog.y - this.height;
         };
-        FrogJumpView.prototype.playAction = function (actionName) {
+        FrogJumpView.prototype.playAction = function (actionName, posY, posX) {
             this.inJump = true;
             if (actionName == FrogJumpView.ACTIONS.stand) {
-                this.y = this.initYPos;
+                if (posY && posY > 0) { //保证在柱子顶端
+                    this.y = posY;
+                }
+                else {
+                    this.y = this.initYPos;
+                }
+                if (posX) {
+                    this.x = posX;
+                }
                 this.jump_stand.play(0, false);
                 this.inJump = false;
             }
@@ -112,6 +139,28 @@ var game;
             else if (actionName == FrogJumpView.ACTIONS.jump_up_blast) {
                 this.jump_up_blast.play(0, false);
             }
+            else if (actionName == FrogJumpView.ACTIONS.jump_to_fly) {
+                this.jump_to_fly.play(0, false);
+            }
+            else if (actionName == FrogJumpView.ACTIONS.in_fly) {
+                this.in_fly.play(0, true);
+                this.inFly = true;
+            }
+            else if (actionName == FrogJumpView.ACTIONS.in_fly_rocket) {
+                this.in_fly_rocket.play(0, true);
+                this.inFly = true;
+            }
+            else if (actionName == FrogJumpView.ACTIONS.fly_to_land) {
+                this.in_fly_rocket.stop();
+                this.in_fly.stop();
+                this.fly_to_land.play(0, false);
+            }
+            else if (actionName == FrogJumpView.ACTIONS.seat_coffee) {
+                this.seat_coffee.play(0, false);
+            }
+            else if (actionName == FrogJumpView.ACTIONS.jump_to_rocket) {
+                this.jump_to_rocket.play(0, false);
+            }
         };
         FrogJumpView.prototype.checkSpeed = function (speed) {
             var dif = speed - GameConfig.SPEED;
@@ -137,10 +186,12 @@ var game;
             this.jump_up.interval = interval;
             this.jump_up_blast.interval = interval;
         };
-        FrogJumpView.prototype.getCoin = function () {
+        FrogJumpView.prototype.getCoin = function (inFly) {
             var _this = this;
             this.coin.visible = true;
-            this.coin.pos(-10, this.img_frog.y - 80);
+            var posX = inFly ? this.img_frog.x - 10 : -10;
+            this.coin.pos(posX, this.img_frog.y - 80);
+            utl.MusicSoundTool.playSound(def.MusicConfig.CommonSound.eat);
             var tw = Tween.to(this.coin, { y: this.img_frog.y - 120 }, 300, null, Laya.Handler.create(this, function () {
                 _this.coin.visible = false;
                 Tween.clear(tw);
@@ -156,6 +207,7 @@ var game;
         FrogJumpView.ACTIONEND = "actionEnd";
         FrogJumpView.EVENT_DIE = "event_die";
         FrogJumpView.EVENT_STOP = "event_stop";
+        FrogJumpView.EVENT_FLYEND = "event_flyEnd";
         FrogJumpView.ACTIONS = {
             stand: "stand",
             jump_small: "jump_small",
@@ -166,7 +218,13 @@ var game;
             jump_big_blast: "jump_big_blast",
             jump_big_fall: "jump_big_fall",
             jump_up: "jump_up",
-            jump_up_blast: "jup_up_blast",
+            jump_up_blast: "jump_up_blast",
+            jump_to_fly: "jump_to_fly",
+            in_fly: "in_fly",
+            fly_to_land: "fly_to_land",
+            seat_coffee: "seat_coffee",
+            jump_to_rocket: "jump_to_rocket",
+            in_fly_rocket: "in_fly_rocket"
         };
         return FrogJumpView;
     }(ui.game.FrogViewUI));

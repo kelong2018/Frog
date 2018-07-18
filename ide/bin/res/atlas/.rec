@@ -15,8 +15,14 @@ D frog
 P C2880138 +1.png
 R 782DB96F bg.png
 P AFC788B8 closeButton.png
+P B333D716 fei_01.png
+P 3E6B631F fei_02.png
+P 357E8C13 fei_03.png
+P E1534101 fei_04.png
+P A1F72F36 huojian_01.png
 P 18A12C16 img_tip.png
 R BC3E09A1 logo.jpg
+P 539EB491 lucky.png
 P AEA158D4 new.png
 R 26400FFC overBg.png
 P A3D7BBB4 rank1.png
@@ -36,6 +42,7 @@ P 5989F699 tiao_09.png
 P 6529CC8D time.png
 P F93E2193 wuqi.png
 P 13630391 xianjing.png
+P 0A57D8F2 yuandi_01.png
 R CA8B893E yuanjingcen.png
 R E5A6B53B yun.png
 P C4B9ACCF zha_01.png

@@ -10,6 +10,7 @@ namespace game {
         static ACTIONEND = "actionEnd";
         static EVENT_DIE = "event_die";
         static EVENT_STOP = "event_stop";
+        static EVENT_FLYEND = "event_flyEnd"
 
         static ACTIONS = {
             stand: "stand",
@@ -21,7 +22,13 @@ namespace game {
             jump_big_blast: "jump_big_blast",
             jump_big_fall: "jump_big_fall",
             jump_up: "jump_up",
-            jump_up_blast: "jup_up_blast",
+            jump_up_blast: "jump_up_blast",
+            jump_to_fly: "jump_to_fly",
+            in_fly: "in_fly",
+            fly_to_land: "fly_to_land",
+            seat_coffee: "seat_coffee",
+            jump_to_rocket: "jump_to_rocket",
+            in_fly_rocket: "in_fly_rocket"
         }
 
         inJump: boolean = false;
@@ -31,6 +38,8 @@ namespace game {
         initYPos = 0;
         coin: Image;
         havePlayBlast = false;
+        inFly = false;
+        waitLand = false; //飞行等落地
 
         constructor() {
             super();
@@ -70,9 +79,26 @@ namespace game {
                 this.playAction(FrogJumpView.ACTIONS.stand);
                 this.x += GameConfig.SMALLSTEP;
             });
-            this.jump_up_blast.on(Laya.Event.COMPLETE, this, () => {                
+            this.jump_up_blast.on(Laya.Event.COMPLETE, this, () => {
                 this.playBlastSound();
                 this.event(FrogJumpView.ACTIONEND, FrogJumpView.EVENT_DIE);
+            });
+            this.jump_to_fly.on(Laya.Event.COMPLETE, this, () => {
+                this.playAction(FrogJumpView.ACTIONS.in_fly);
+            });
+            this.in_fly.on(Laya.Event.COMPLETE, this, () => {
+            });
+            this.fly_to_land.on(Laya.Event.COMPLETE, this, () => {
+                this.inJump = false;
+                this.event(FrogJumpView.ACTIONEND, FrogJumpView.EVENT_FLYEND);
+                this.event(FrogJumpView.ACTIONEND, FrogJumpView.EVENT_STOP);
+            });
+            this.seat_coffee.on(Laya.Event.COMPLETE, this, () => {
+            });
+            this.jump_to_rocket.on(Laya.Event.COMPLETE, this, () => {
+                this.playAction(FrogJumpView.ACTIONS.in_fly_rocket);
+            });
+            this.in_fly_rocket.on(Laya.Event.COMPLETE, this, () => {
             });
             this.actionInterval = this.jump_small.interval;
         }
@@ -91,10 +117,17 @@ namespace game {
             return this.y + this.img_frog.y - this.height;
         }
 
-        playAction(actionName) {
+        playAction(actionName, posY?, posX?) {
             this.inJump = true;
             if (actionName == FrogJumpView.ACTIONS.stand) {
-                this.y = this.initYPos
+                if (posY && posY > 0) { //保证在柱子顶端
+                    this.y = posY
+                } else {
+                    this.y = this.initYPos
+                }
+                if(posX) {
+                    this.x = posX;
+                }
                 this.jump_stand.play(0, false);
                 this.inJump = false;
             } else if (actionName == FrogJumpView.ACTIONS.jump_small) {
@@ -118,6 +151,22 @@ namespace game {
                 this.jump_up.play(0, false);
             } else if (actionName == FrogJumpView.ACTIONS.jump_up_blast) {
                 this.jump_up_blast.play(0, false);
+            } else if (actionName == FrogJumpView.ACTIONS.jump_to_fly) {
+                this.jump_to_fly.play(0, false);
+            } else if (actionName == FrogJumpView.ACTIONS.in_fly) {
+                this.in_fly.play(0, true);
+                this.inFly = true;
+            } else if(actionName == FrogJumpView.ACTIONS.in_fly_rocket) {
+                this.in_fly_rocket.play(0, true);
+                this.inFly = true;
+            } else if (actionName == FrogJumpView.ACTIONS.fly_to_land) {
+                this.in_fly_rocket.stop();
+                this.in_fly.stop();
+                this.fly_to_land.play(0, false);
+            } else if (actionName == FrogJumpView.ACTIONS.seat_coffee) {
+                this.seat_coffee.play(0, false);
+            } else if (actionName == FrogJumpView.ACTIONS.jump_to_rocket) {
+                this.jump_to_rocket.play(0, false);
             }
         }
 
@@ -147,9 +196,11 @@ namespace game {
             this.jump_up_blast.interval = interval;
         }
 
-        getCoin() {
+        getCoin(inFly?) {
             this.coin.visible = true;
-            this.coin.pos(-10, this.img_frog.y - 80);
+            let posX = inFly ? this.img_frog.x - 10 : -10;
+            this.coin.pos(posX, this.img_frog.y - 80);
+            utl.MusicSoundTool.playSound(def.MusicConfig.CommonSound.eat);
             let tw = Tween.to(this.coin, { y: this.img_frog.y - 120 }, 300, null, Laya.Handler.create(this, () => {
                 this.coin.visible = false;
                 Tween.clear(tw);

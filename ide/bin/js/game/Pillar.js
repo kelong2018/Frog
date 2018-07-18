@@ -19,8 +19,10 @@ var game;
         __extends(Pillar, _super);
         function Pillar() {
             var _this = _super.call(this) || this;
+            _this.LUCKRATE = 1; //道具出现概率[0, 1]
             _this.haveTrap = false;
             _this.haveCoin = false;
+            _this.isLucky = false;
             _this.size(GameConfig.PILLARWIDTH, Laya.stage.height / 2);
             _this.pivot(_this.width / 2, 0);
             _this.trap = new Sprite();
@@ -31,12 +33,18 @@ var game;
             _this.trap.size(GameConfig.PILLARWIDTH, ttH);
             _this.trap.pos(13, -ttH + 25);
             _this.addChildren(_this.trap);
-            _this.coinAciton = new Laya.Animation();
-            _this.coinAciton.pos(_this.width / 2, -40);
-            _this.addChild(_this.coinAciton);
+            _this.coinAction = new Laya.Animation();
+            _this.coinAction.pos(_this.width / 2, -40);
+            _this.addChild(_this.coinAction);
             var anim = def.SourceConfig.animationSource.coinAction + "#aniUD";
-            _this.coinAciton.play(0, true, anim);
-            _this.coinAciton.visible = false;
+            _this.coinAction.play(0, true, anim);
+            _this.coinAction.visible = false;
+            _this.luckyAction = new Laya.Animation();
+            _this.luckyAction.pos(_this.width / 2, -40);
+            _this.addChild(_this.luckyAction);
+            var animL = def.SourceConfig.animationSource.coinAction + "#ani_lucky";
+            _this.luckyAction.play(0, true, animL);
+            _this.luckyAction.visible = false;
             // this.trap = new Image("frog/xianjing.png")
             var p = new Sprite;
             var t = Laya.loader.getRes("frog/zhuzi.png");
@@ -45,16 +53,18 @@ var game;
             _this.addChild(p);
             return _this;
         }
-        Pillar.prototype.init = function (x, y, haveCoin, haveTrap) {
+        Pillar.prototype.init = function (x, y, haveCoin, isLucky, haveTrap) {
             this.pos(x, y);
             this.haveCoin = haveCoin;
-            this.coinAciton.visible = haveCoin;
+            this.isLucky = isLucky;
+            this.coinAction.visible = haveCoin;
+            this.luckyAction.visible = isLucky;
             this.trap.visible = haveTrap;
             this.haveTrap = haveTrap;
         };
-        Pillar.prototype.hideCoin = function () {
-            this.coinAciton.visible = false;
-            utl.MusicSoundTool.playSound(def.MusicConfig.CommonSound.eat);
+        Pillar.prototype.hideProp = function () {
+            this.coinAction.visible = false;
+            this.luckyAction.visible = false;
         };
         /**
          * 获取展示 array
@@ -85,7 +95,7 @@ var game;
         };
         Pillar.PILLARTAG = "pillar";
         //1-柱子，2-没有柱子，3-柱子上有刺，4-柱子掉落
-        Pillar.BEGINARRAY = [1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 3, 1, 1, 2];
+        Pillar.BEGINARRAY = [1, 1, 1, 1,]; //1, 2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 3, 1, 1, 2];
         Pillar.NEXTARRAY = [[1, 2, 1, 3, 1], [1, 3, 1, 1, 2], [1, 2, 1, 3, 1], [1, 3, 1, 2, 1], [1, 4, 1, 2, 1], [1, 3, 4, 1]];
         return Pillar;
     }(Sprite));

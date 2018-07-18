@@ -9,14 +9,18 @@ namespace game {
      */
     export class Pillar extends Sprite {
         static PILLARTAG = "pillar";
+        
+        LUCKRATE = 1; //道具出现概率[0, 1]
         //1-柱子，2-没有柱子，3-柱子上有刺，4-柱子掉落
-        static BEGINARRAY = [1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 3, 1, 1, 2];
+        static BEGINARRAY = [1, 1, 1, 1, ]//1, 2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 3, 1, 1, 2];
         static NEXTARRAY = [[1, 2, 1, 3, 1], [1, 3, 1, 1, 2], [1, 2, 1, 3, 1], [1, 3, 1, 2, 1], [1, 4, 1, 2, 1], [1, 3, 4, 1]];
         haveTrap = false;
         trap;//: Laya.Image; //陷阱
 
-        coinAciton;
+        coinAction;
+        luckyAction;
         haveCoin = false;
+        isLucky = false;
 
         constructor() {
             super();
@@ -32,12 +36,19 @@ namespace game {
             this.trap.pos(13, -ttH + 25);
             this.addChildren(this.trap);
 
-            this.coinAciton = new Laya.Animation();
-            this.coinAciton.pos(this.width/2 , -40);
-            this.addChild(this.coinAciton);
+            this.coinAction = new Laya.Animation();
+            this.coinAction.pos(this.width/2 , -40);
+            this.addChild(this.coinAction);
             let anim = def.SourceConfig.animationSource.coinAction + "#aniUD";
-            this.coinAciton.play(0, true, anim);
-            this.coinAciton.visible = false;
+            this.coinAction.play(0, true, anim);
+            this.coinAction.visible = false;
+
+            this.luckyAction = new Laya.Animation();
+            this.luckyAction.pos(this.width/2 , -40);
+            this.addChild(this.luckyAction);
+            let animL = def.SourceConfig.animationSource.coinAction + "#ani_lucky";
+            this.luckyAction.play(0, true, animL);
+            this.luckyAction.visible = false;
 
             // this.trap = new Image("frog/xianjing.png")
             let p = new Sprite;
@@ -47,17 +58,19 @@ namespace game {
             this.addChild(p);
         }
 
-        init(x, y, haveCoin, haveTrap?) {
+        init(x, y, haveCoin, isLucky, haveTrap?) {
             this.pos(x, y);
             this.haveCoin = haveCoin;
-            this.coinAciton.visible = haveCoin;
+            this.isLucky = isLucky;
+            this.coinAction.visible = haveCoin;
+            this.luckyAction.visible = isLucky;
             this.trap.visible = haveTrap;
             this.haveTrap = haveTrap;
         }
 
-        hideCoin() {
-            this.coinAciton.visible = false;
-            utl.MusicSoundTool.playSound(def.MusicConfig.CommonSound.eat);
+        hideProp() {
+            this.coinAction.visible = false;
+            this.luckyAction.visible = false;
         }
 
         /**

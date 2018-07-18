@@ -28,7 +28,7 @@ var game;
             _this.roadArray = []; //1-柱子，2-没有柱子，3-柱子上有刺，4-柱子掉落
             _this.jumpToBlast = false; //要爆
             _this.havePlayBlast = false;
-            _this.gameStatus = 0; //游戏状态 0--暂停中，1--进行中
+            _this.gameStatus = 0; //游戏状态 0--暂停中，1--进行中，2--结束
             _this.pillarArray = []; //柱子对象
             _this.lastStepBig = true; //上一次间隔是大间隔
             _this.lastHaveTrap = false; //上次有陷阱
@@ -38,6 +38,8 @@ var game;
             _this.play_self = false;
             ////////////////界面操作///////////////
             _this.mousePos = { time: 0, x: 0, y: 0 };
+            //原地喝coffee
+            _this.coffeeTime = 10; //coffee加分
             _this.pillarYPos = Laya.stage.height - 587; // * 2 / 5;
             _this.size(Laya.stage.width, Laya.stage.height);
             _this.gameMode = gameMode;
@@ -194,6 +196,7 @@ var game;
         GameMainView.prototype.gameOver = function () {
             var _this = this;
             this.pause();
+            this.gameStatus = 2;
             this.label_score.text = "";
             var oView = new game.GameOverView(this.score);
             oView.zOrder = 100;
@@ -220,6 +223,7 @@ var game;
         GameMainView.prototype.playAgin = function () {
             this.clearGame();
             this.initGoods();
+            this.gameStatus = 0;
             this.label_jump.ani_play.play(0, true);
             this.label_jump.visible = true;
         };
@@ -291,6 +295,7 @@ var game;
             this.label_jump.label_s.text = def.getLanguageStr(def.LanguageConfig.Keys.JUMP);
             this.sp_map.addChild(this.label_jump);
             this.label_jump.visible = false;
+            this.flyPosX = Math.floor(Laya.stage.width * 0.6) - def.GameConfig.SMALLSTEP;
             this.initGoods();
         };
         GameMainView.prototype.initGoods = function () {
@@ -340,12 +345,17 @@ var game;
                 var haveTrap = this.pillarShowArray[this.pillarIndex] == 3;
                 var pillar = Laya.Pool.getItemByClass(game.Pillar.PILLARTAG, game.Pillar);
                 var haveCoin = false;
+                var isLucky = false;
                 if (this.roadArray.length > 8 && !haveTrap) {
-                    if (Math.random() > 0.6) {
+                    var rate = Math.random();
+                    if (rate > 0.9 && !this.frog.inFly) {
+                        isLucky = true;
+                    }
+                    else if (rate > 0.5) {
                         haveCoin = true;
                     }
                 }
-                pillar.init(this.lastXpos, this.pillarYPos, haveCoin, haveTrap);
+                pillar.init(this.lastXpos, this.pillarYPos, haveCoin, isLucky, haveTrap);
                 this.sp_map.addChild(pillar);
                 this.pillarArray.push(pillar);
                 item.pillar = pillar;
@@ -388,7 +398,38 @@ var game;
             this.cloudsView.run(this.gameSpeed - 2);
             this.bgView.run(this.gameSpeed - 1.5);
             this.playSelf();
-            this.frog.x -= this.gameSpeed;
+            if (this.frog.inFly) { //飞行中
+                if (Math.abs(this.frog.x - this.flyPosX) < 3) {
+                    this.frog.x = this.flyPosX;
+                }
+                //调整到合适位置
+                if (this.frog.x < this.flyPosX) {
+                    this.frog.x += 2;
+                }
+                else if (this.frog.x > this.flyPosX) {
+                    this.frog.x -= 2;
+                }
+                //准备降落
+                if (this.frog.waitLand) {
+                    var itemN = this.roadArray[this.roadIndex + 2];
+                    if (itemN.tag == 1 || itemN.tag == 4) {
+                        if (itemN.pillar.x < this.frog.x + def.GameConfig.BIGSTEP) {
+                            this.frogLand();
+                        }
+                    }
+                }
+                //柱子路径
+                var item = this.roadArray[this.roadIndex];
+                if (item.tag == 2 || item.tag == 3) {
+                    this.roadIndex++;
+                }
+                else if (item.pillar.x < this.frog.x) {
+                    this.roadIndex++;
+                }
+            }
+            else {
+                this.frog.x -= this.gameSpeed;
+            }
             var frogX = this.frog.getRealPosX();
             //青蛙与墙壁碰撞
             if (frogX <= 0 || frogX > this.width) {
@@ -430,15 +471,22 @@ var game;
         //青蛙动作结束
         GameMainView.prototype.frogActionOver = function (eventName) {
             var _this = this;
+            if (this.gameStatus == 2) { //游戏结束
+                return;
+            }
             if (eventName == game.FrogJumpView.EVENT_STOP) {
                 if (this.gameStatus != 1) {
                     this.start();
                 }
                 var item = this.roadArray[this.roadIndex];
-                if (item.pillar.haveCoin) {
-                    item.pillar.hideCoin();
+                if (item.pillar.haveCoin) { //金币
+                    item.pillar.hideProp();
                     this.frog.getCoin();
                     this.setScore();
+                }
+                if (item.pillar.isLucky) { //道具
+                    item.pillar.hideProp();
+                    this.getLucky();
                 }
                 if (item.tag == 4) {
                     var posY = this.pillarYPos;
@@ -451,6 +499,11 @@ var game;
             else if (eventName == game.FrogJumpView.EVENT_DIE) {
                 this.frog.visible = false;
                 this.gameOver();
+            }
+            else if (eventName == game.FrogJumpView.EVENT_FLYEND) {
+                this.roadIndex++;
+                var item = this.roadArray[this.roadIndex];
+                this.frog.playAction(game.FrogJumpView.ACTIONS.stand, 0, item.pillar.x);
             }
         };
         GameMainView.prototype.beginWaterAction = function () {
@@ -468,6 +521,68 @@ var game;
             var posY = Laya.stage.height - this.waterView.picHeight;
             Tween.clearTween(this.onTween1);
             Tween.to(this.waterView, { y: posY }, 500, null, Handler.create(this, this.beginWaterAction));
+        };
+        //吃到道具
+        GameMainView.prototype.getLucky = function () {
+            this.coffeeTime = 10;
+            var nowItem = this.roadArray[this.roadIndex];
+            if (nowItem.tag == 4) { //掉下去的柱子
+                Laya.timer.loop(200, this, this.seatCoffee);
+                return;
+            }
+            var rate = Math.random();
+            if (rate < 0.3) { //coffee
+                Laya.timer.loop(200, this, this.seatCoffee);
+            }
+            else if (rate < 0.6) { //superman
+                this.flySuperman();
+            }
+            else { //rocket
+                this.flyRocket();
+            }
+        };
+        GameMainView.prototype.seatCoffee = function () {
+            this.frog.playAction(game.FrogJumpView.ACTIONS.seat_coffee);
+            Laya.timer.clear(this, this.onLoop);
+            this.coffeeTime--;
+            this.frog.getCoin();
+            this.setScore();
+            if (this.coffeeTime < 1) {
+                var nowItem = this.roadArray[this.roadIndex];
+                this.frog.playAction(game.FrogJumpView.ACTIONS.stand, nowItem.pillar.y);
+                Laya.timer.clear(this, this.seatCoffee);
+                this.continue();
+            }
+        };
+        //fly
+        GameMainView.prototype.flySuperman = function () {
+            this.frog.playAction(Frog.ACTIONS.jump_to_fly);
+            this.gameSpeedNormal = this.gameSpeed;
+            this.gameSpeed = 10;
+            Laya.timer.loop(200, this, this.flyScore);
+        };
+        //rocket
+        GameMainView.prototype.flyRocket = function () {
+            this.frog.playAction(Frog.ACTIONS.jump_to_rocket);
+            this.gameSpeedNormal = this.gameSpeed;
+            this.gameSpeed = 10;
+            Laya.timer.loop(200, this, this.flyScore);
+        };
+        //飞行分数
+        GameMainView.prototype.flyScore = function () {
+            this.frog.getCoin(true);
+            this.setScore();
+            this.coffeeTime--;
+            if (this.coffeeTime < 1) {
+                this.frog.waitLand = true; //等落地
+            }
+        };
+        GameMainView.prototype.frogLand = function () {
+            this.frog.inFly = false;
+            this.frog.waitLand = false;
+            Laya.timer.clear(this, this.flyScore);
+            this.gameSpeed = this.gameSpeedNormal; //恢复游戏速度
+            this.frog.playAction(Frog.ACTIONS.fly_to_land);
         };
         return GameMainView;
     }(ui.game.GameMainUI));

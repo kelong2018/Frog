@@ -5,22 +5,34 @@ namespace game {
     import Image = Laya.Image;
 
     /**
-     * 青蛙
+     * 柱子
      */
     export class Pillar extends Sprite {
+
+        //event
+        EVENT_DOOR_OPEN = "event_door_open";
+
+        static ACTIONS = {
+            openDoor: "openDoor",
+            closeDoor: "closeDoor",
+            coinAction: "coinAction",
+            propAction: "propAction",
+        }
+
         static PILLARTAG = "pillar";
-        
+
         LUCKRATE = 1; //道具出现概率[0, 1]
         //1-柱子，2-没有柱子，3-柱子上有刺，4-柱子掉落
-        static BEGINARRAY = [1, 1, 1, 1, ]//1, 2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 3, 1, 1, 2];
+        static BEGINARRAY = [1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 3, 1, 1, 2];
         static NEXTARRAY = [[1, 2, 1, 3, 1], [1, 3, 1, 1, 2], [1, 2, 1, 3, 1], [1, 3, 1, 2, 1], [1, 4, 1, 2, 1], [1, 3, 4, 1]];
         haveTrap = false;
         trap;//: Laya.Image; //陷阱
 
-        coinAction;
-        luckyAction;
+        action;
+        actionName;
         haveCoin = false;
         isLucky = false;
+        haveDoor = false;
 
         constructor() {
             super();
@@ -36,21 +48,16 @@ namespace game {
             this.trap.pos(13, -ttH + 25);
             this.addChildren(this.trap);
 
-            this.coinAction = new Laya.Animation();
-            this.coinAction.pos(this.width/2 , -40);
-            this.addChild(this.coinAction);
-            let anim = def.SourceConfig.animationSource.coinAction + "#aniUD";
-            this.coinAction.play(0, true, anim);
-            this.coinAction.visible = false;
+            this.action = new Laya.Animation();
+            this.action.pos(this.width / 2, -40);
+            this.addChild(this.action);
+            this.action.visible = false;
+            this.action.on(Laya.Event.COMPLETE, this, () => {
+                if (this.actionName == Pillar.ACTIONS.openDoor) {
+                    this.event(this.EVENT_DOOR_OPEN);
+                }
+            });
 
-            this.luckyAction = new Laya.Animation();
-            this.luckyAction.pos(this.width/2 , -40);
-            this.addChild(this.luckyAction);
-            let animL = def.SourceConfig.animationSource.coinAction + "#ani_lucky";
-            this.luckyAction.play(0, true, animL);
-            this.luckyAction.visible = false;
-
-            // this.trap = new Image("frog/xianjing.png")
             let p = new Sprite;
             let t: Laya.Texture = Laya.loader.getRes("frog/zhuzi.png");
             p.graphics.drawTexture(t, 0, 0, GameConfig.PILLARWIDTH, Laya.stage.height / 2);
@@ -58,19 +65,53 @@ namespace game {
             this.addChild(p);
         }
 
-        init(x, y, haveCoin, isLucky, haveTrap?) {
+        /**
+         * 
+         * @param x 
+         * @param y 
+         * @param haveCoin 是否有金币
+         * @param isLucky  是否有道具
+         * @param haveDoor 是否有门
+         * @param haveTrap 是否有陷阱
+         */
+        init(x, y, haveCoin, isLucky, haveDoor, haveTrap?) {
             this.pos(x, y);
+            this.action.visible = false;
             this.haveCoin = haveCoin;
             this.isLucky = isLucky;
-            this.coinAction.visible = haveCoin;
-            this.luckyAction.visible = isLucky;
+            this.haveDoor = haveDoor;
+            this.actionName = "";
+            let anim;
+            if (haveCoin) {
+                anim = def.SourceConfig.animationSource.coinAction + "#aniUD";
+            } else if (isLucky) {
+                anim = def.SourceConfig.animationSource.coinAction + "#ani_lucky";
+            } else if (haveDoor) {
+                anim = def.SourceConfig.animationSource.coinAction + "#ani_door";
+            }
+            if (anim) {
+                this.action.visible = true;
+                this.action.play(0, true, anim);
+            }
             this.trap.visible = haveTrap;
             this.haveTrap = haveTrap;
         }
 
         hideProp() {
-            this.coinAction.visible = false;
-            this.luckyAction.visible = false;
+            this.action.visible = false;
+        }
+
+        openDoor() {
+            this.actionName = Pillar.ACTIONS.openDoor;
+            this.action.visible = true;
+            let animDO = def.SourceConfig.animationSource.coinAction + "#ani_door_open";
+            this.action.play(0, false, animDO);
+        }
+
+        closeDoor() {
+            this.actionName = Pillar.ACTIONS.closeDoor;
+            let animDC = def.SourceConfig.animationSource.coinAction + "#ani_door_close";
+            this.action.play(0, false, animDC);
         }
 
         /**

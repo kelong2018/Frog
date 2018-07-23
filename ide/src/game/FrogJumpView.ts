@@ -40,6 +40,8 @@ namespace game {
         havePlayBlast = false;
         inFly = false;
         waitLand = false; //飞行等落地
+        inDoor = false; //任意门中
+        doorDie = false; //通过任意门掉到陷阱里面
 
         constructor() {
             super();
@@ -118,6 +120,7 @@ namespace game {
         }
 
         playAction(actionName, posY?, posX?) {
+            // console.log("playAction////", actionName);
             this.inJump = true;
             if (actionName == FrogJumpView.ACTIONS.stand) {
                 if (posY && posY > 0) { //保证在柱子顶端
@@ -198,7 +201,7 @@ namespace game {
 
         getCoin(inFly?) {
             this.coin.visible = true;
-            let posX = inFly ? this.img_frog.x - 10 : -10;
+            let posX = inFly ? this.img_frog.x - 20 : -10;
             this.coin.pos(posX, this.img_frog.y - 80);
             utl.MusicSoundTool.playSound(def.MusicConfig.CommonSound.eat);
             let tw = Tween.to(this.coin, { y: this.img_frog.y - 120 }, 300, null, Laya.Handler.create(this, () => {

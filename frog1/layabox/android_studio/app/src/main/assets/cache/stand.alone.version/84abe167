@@ -1,0 +1,52 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var kelong;
+(function (kelong) {
+    var ui;
+    (function (ui) {
+        var Event = Laya.Event;
+        // import Box = laya.editerUI.View;
+        var View = laya.ui.View;
+        var ViewColor = /** @class */ (function (_super) {
+            __extends(ViewColor, _super);
+            function ViewColor() {
+                var _this = _super.call(this) || this;
+                _this.left = _this.right = _this.top = _this.bottom = 0;
+                //this.width = Laya.stage.width;
+                //this.height = Laya.stage.height;
+                // if (Laya.Browser.onPC) {
+                //     Laya.stage.on(Laya.Event.RESIZE, this, () => {
+                //         let w = Browser.clientWidth * Browser.pixelRatio;
+                //         let h = Browser.clientHeight * Browser.pixelRatio;
+                //         Laya.stage.desginWidth = w;
+                //         Laya.stage.desginHeight = h;
+                //         setTimeout(() => {
+                //             Laya.stage.setScreenSize(w, h);
+                //             try {
+                //                 this.width = w;
+                //                 this.height = h;
+                //             } catch (e) { }
+                //         }, 10);
+                //     });
+                // }
+                _this.on(Event.RESIZE, _this, function () {
+                    if (_this.color) {
+                        _this.graphics.drawRect(0, 0, _this.width, _this.height, _this.color);
+                    }
+                });
+                return _this;
+            }
+            return ViewColor;
+        }(View));
+        ui.ViewColor = ViewColor;
+    })(ui = kelong.ui || (kelong.ui = {}));
+})(kelong || (kelong = {}));
+//# sourceMappingURL=ViewColor.js.map

@@ -212,35 +212,35 @@ namespace lobby {
             let maxScore = 200;  //设计一个区间
             let begin = 0;
             let add = 0;
-            if(myScore > 150) {
+            if(myScore > 500) {
                 begin = 99;
-            } else if(myScore > 120) {
+            } else if(myScore > 400) {
                 begin = 90;
-                add = (myScore - 120) * 9 / (150-120)
-            } else if(myScore > 100) {
+                add = (myScore - 400) * 9 / (500-400)
+            } else if(myScore > 300) {
                 begin = 84;
-                add = (myScore - 100) * 6 / (120-100)
-            } else if(myScore > 90) {
+                add = (myScore - 300) * 6 / (400-300)
+            } else if(myScore > 200) {
                 begin = 76;
-                add = (myScore - 90) * 8 / (100-90)
-            } else if(myScore > 80) {
+                add = (myScore - 200) * 8 / (300-200)
+            } else if(myScore > 160) {
                 begin = 70;
-                add = (myScore - 80) * 6 / (90-80)
-            } else if(myScore > 70) {
+                add = (myScore - 160) * 6 / (200-160)
+            } else if(myScore > 140) {
                 begin = 60;
-                add = (myScore - 70) * 10 / (80-70)
-            } else if(myScore > 60){
+                add = (myScore - 140) * 10 / (160-140)
+            } else if(myScore > 90){
                 begin = 40;
-                add = (myScore - 60) * 20 / (70-60)
-            } else if(myScore > 40) {
+                add = (myScore - 90) * 20 / (140-90)
+            } else if(myScore > 80) {
                 begin = 20;
-                add = (myScore - 40) * 20 / (60-40);
-            } else if(myScore > 20) {
+                add = (myScore - 80) * 20 / (90-80);
+            } else if(myScore > 40) {
                 begin = 8;
-                add = (myScore - 20) * 12 / (40-20);
-            } else if(myScore > 10) {
+                add = (myScore - 40) * 12 / (50-40);
+            } else if(myScore > 30) {
                 begin = 3;
-                add = (myScore - 10) * 10 / (20-10)
+                add = (myScore - 30) * 10 / (40-30)
             } else if(myScore > 0){
                 begin = 1
             } else {

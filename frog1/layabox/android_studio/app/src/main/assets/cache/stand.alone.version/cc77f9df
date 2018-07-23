@@ -1,0 +1,39 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var lobby;
+(function (lobby_1) {
+    var ViewColor = kelong.ui.ViewColor;
+    var LoadingView = /** @class */ (function (_super) {
+        __extends(LoadingView, _super);
+        function LoadingView() {
+            var _this = _super.call(this) || this;
+            _this.index = 0;
+            _this.size(Laya.stage.width, Laya.stage.height);
+            _this.color = "3584fb";
+            // label_begin
+            _this.on(Laya.Event.CLICK, _this, _this.beginGame);
+            var frog = new ui.game.FrogJumpUI;
+            frog.centerX = 0;
+            frog.centerY = 0;
+            frog.jump.play(0, true);
+            _this.addChild(frog);
+            return _this;
+        }
+        LoadingView.prototype.beginGame = function () {
+            var lobby = new lobby_1.LobbyMainView();
+            Laya.stage.addChild(lobby);
+            this.destroy();
+        };
+        return LoadingView;
+    }(ViewColor));
+    lobby_1.LoadingView = LoadingView;
+})(lobby || (lobby = {}));
+//# sourceMappingURL=LoadingView.js.map

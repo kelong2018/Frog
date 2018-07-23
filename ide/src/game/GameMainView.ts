@@ -33,7 +33,6 @@ namespace game {
         speedAddTag = 0;        //游戏速度加速次数标记
         gameSpeed;  //游戏速度
         gameSpeedNormal; //游戏速度
-        flyPosX;
 
         pillarYPos;
         //场景
@@ -327,8 +326,6 @@ namespace game {
             this.sp_map.addChild(this.label_jump);
             this.label_jump.visible = false;
 
-            this.flyPosX = Math.floor(Laya.stage.width * 0.6) - def.GameConfig.SMALLSTEP;
-
             this.initGoods();
         }
 
@@ -380,15 +377,22 @@ namespace game {
                 let pillar: Pillar = Laya.Pool.getItemByClass(Pillar.PILLARTAG, Pillar);
                 let haveCoin = false;
                 let isLucky = false;
+                let haveDoor = false;
                 if (this.roadArray.length > 8 && !haveTrap) {
                     let rate = Math.random();
-                    if (rate > 0.9 && !this.frog.inFly) {
-                        isLucky = true;
+                    if (!this.frog.inFly && !this.frog.inDoor && this.pillarShowArray[this.pillarIndex] != 4) {
+                        if (rate > 0.95) { //0.9
+                            haveDoor = true;
+                        } else if (rate > 0.88) {
+                            isLucky = true;
+                        } else if (rate > 0.5) {
+                            haveCoin = true;
+                        }
                     } else if (rate > 0.5) {
                         haveCoin = true;
                     }
                 }
-                pillar.init(this.lastXpos, this.pillarYPos, haveCoin, isLucky, haveTrap);
+                pillar.init(this.lastXpos, this.pillarYPos, haveCoin, isLucky, haveDoor, haveTrap);
                 this.sp_map.addChild(pillar);
                 this.pillarArray.push(pillar);
                 item.pillar = pillar;
@@ -433,58 +437,7 @@ namespace game {
             this.bgView.run(this.gameSpeed - 1.5);
 
             this.playSelf();
-            if (this.frog.inFly) { //飞行中
-                if (Math.abs(this.frog.x - this.flyPosX) < 3) {
-                    this.frog.x = this.flyPosX;
-                }
-                //调整到合适位置
-                if (this.frog.x < this.flyPosX) {
-                    this.frog.x += 2;
-                } else if (this.frog.x > this.flyPosX) {
-                    this.frog.x -= 2;
-                }
-                //准备降落
-                if (this.frog.waitLand) {
-                    let itemN = this.roadArray[this.roadIndex + 2];
-                    if (itemN.tag == 1 || itemN.tag == 4) {
-                        if (itemN.pillar.x < this.frog.x + def.GameConfig.BIGSTEP) {
-                            this.frogLand();
-                        }
-                    }
-                }
-                //柱子路径
-                let item = this.roadArray[this.roadIndex];
-                if (item.tag == 2 || item.tag == 3) {
-                    this.roadIndex++;
-                } else if (item.pillar.x < this.frog.x) {
-                    this.roadIndex++;
-                }
-            } else {
-                this.frog.x -= this.gameSpeed;
-            }
-
-            let frogX = this.frog.getRealPosX();
-            //青蛙与墙壁碰撞
-            if (frogX <= 0 || frogX > this.width) {
-                if (frogX <= 0) {
-                    frogX = + 27;
-                } else {
-                    frogX = this.width - 27;
-                }
-                let frogY = this.frog.getRealPosY();
-                this.pause();
-                this.frog.initPos(frogX, frogY);
-                this.frog.playAction(FrogJumpView.ACTIONS.stand_blast);
-            }
-            //要爆
-            if (this.jumpToBlast) {
-                let frogY = this.frog.getRealPosY();
-                if (frogY <= this.pillarYPos - 4 && !this.havePlayBlast) {
-                    this.havePlayBlast = true;
-                    this.frog.playBlastSound();
-                }
-            }
-
+            //刷新柱子
             if (this.pillarArray.length) {
                 for (let i = this.pillarArray.length - 1; i > -1; i--) {
                     let p = this.pillarArray[i];
@@ -498,6 +451,83 @@ namespace game {
                 let lastXpos = this.pillarArray[this.pillarArray.length - 1].x;
                 if (lastXpos <= Laya.stage.width + 300) {
                     this.addPillar();
+                }
+            }
+            if (this.frog.inFly) { //飞行中
+                //调整到合适位置
+                if (Math.abs(this.frog.x - Math.floor(Laya.stage.width * 0.6) - def.GameConfig.SMALLSTEP) < 3) {
+                    this.frog.x = Math.floor(Laya.stage.width * 0.6) - def.GameConfig.SMALLSTEP;
+                }
+                if (this.frog.x < Math.floor(Laya.stage.width * 0.6) - def.GameConfig.SMALLSTEP) {
+                    this.frog.x += 2;
+                } else if (this.frog.x > Math.floor(Laya.stage.width * 0.6) - def.GameConfig.SMALLSTEP) {
+                    this.frog.x -= 2;
+                }
+                if (this.frog.waitLand) {
+                    let itemN = this.roadArray[this.roadIndex + 2];
+                    if (itemN.tag == 1 || itemN.tag == 4) {
+                        if (itemN.pillar.x < this.frog.x + def.GameConfig.BIGSTEP) {
+                            this.frogLand();
+                            return;
+                        }
+                    }
+                }
+                //柱子路径
+                let item = this.roadArray[this.roadIndex];
+                if (item.tag == 2) {
+                    this.roadIndex++;
+                } else if (item.pillar.x < this.frog.x) {
+                    this.roadIndex++;
+                }
+            } else if (this.frog.inDoor) { //传送门中
+                if (this.frog.waitLand) {
+                    let item = this.roadArray[this.roadIndex];
+                    //任意门挂掉
+                    if (this.frog.doorDie) {
+                        if (item.tag == 3) {
+                            if (item.pillar.x < this.frog.x) {
+                                this.outDoor(item);
+                                return;
+                            }
+                        }
+                    } else {
+                        if (item.tag == 1 || item.tag == 4) {
+                            if (item.pillar.x < this.frog.x) {
+                                this.outDoor(item);
+                                return;
+                            }
+                        }
+                    }
+                }
+                //柱子路径
+                let item = this.roadArray[this.roadIndex];
+                if (item.tag == 2) {
+                    this.roadIndex++;
+                } else if (item.pillar.x < this.frog.x) {
+                    this.roadIndex++;
+                }
+            } else { //正常情况
+                this.frog.x -= this.gameSpeed;
+                let frogX = this.frog.getRealPosX();
+                //青蛙与墙壁碰撞
+                if (frogX <= 0 || frogX > this.width) {
+                    if (frogX <= 0) {
+                        frogX = + 27;
+                    } else {
+                        frogX = this.width - 27;
+                    }
+                    let frogY = this.frog.getRealPosY();
+                    this.pause();
+                    this.frog.initPos(frogX, frogY);
+                    this.frog.playAction(FrogJumpView.ACTIONS.stand_blast);
+                }
+                //要爆
+                if (this.jumpToBlast) {
+                    let frogY = this.frog.getRealPosY();
+                    if (frogY <= this.pillarYPos - 4 && !this.havePlayBlast) {
+                        this.havePlayBlast = true;
+                        this.frog.playBlastSound();
+                    }
                 }
             }
         }
@@ -520,6 +550,10 @@ namespace game {
                     item.pillar.hideProp();
                     this.getLucky();
                 }
+                if (item.pillar.haveDoor) {  //门
+                    item.pillar.closeDoor();
+                    this.getDoor();
+                }
                 if (item.tag == 4) {
                     let posY = this.pillarYPos;
                     Tween.to(item.pillar, { y: posY + 100 }, 200);
@@ -532,7 +566,7 @@ namespace game {
                 this.frog.visible = false;
                 this.gameOver();
             } else if (eventName == FrogJumpView.EVENT_FLYEND) {
-                this.roadIndex++;
+                this.roadIndex += 2;
                 let item = this.roadArray[this.roadIndex];
                 this.frog.playAction(FrogJumpView.ACTIONS.stand, 0, item.pillar.x);
             }
@@ -555,9 +589,12 @@ namespace game {
             Tween.to(this.waterView, { y: posY }, 500, null, Handler.create(this, this.beginWaterAction));
         }
 
+
+        ///////道具处理///////////
+        propTime = 10; //道具加分
         //吃到道具
         getLucky() {
-            this.coffeeTime = 10;
+            this.propTime = 10;
             let nowItem = this.roadArray[this.roadIndex]
             if (nowItem.tag == 4) { //掉下去的柱子
                 Laya.timer.loop(200, this, this.seatCoffee);
@@ -574,14 +611,13 @@ namespace game {
         }
 
         //原地喝coffee
-        coffeeTime = 10; //coffee加分
         seatCoffee() {
             this.frog.playAction(FrogJumpView.ACTIONS.seat_coffee);
             Laya.timer.clear(this, this.onLoop)
-            this.coffeeTime--;
+            this.propTime--;
             this.frog.getCoin();
             this.setScore();
-            if (this.coffeeTime < 1) {
+            if (this.propTime < 1) {
                 let nowItem = this.roadArray[this.roadIndex]
                 this.frog.playAction(FrogJumpView.ACTIONS.stand, nowItem.pillar.y);
                 Laya.timer.clear(this, this.seatCoffee);
@@ -592,22 +628,22 @@ namespace game {
         flySuperman() {
             this.frog.playAction(Frog.ACTIONS.jump_to_fly);
             this.gameSpeedNormal = this.gameSpeed;
-            this.gameSpeed = 10;
-            Laya.timer.loop(200, this, this.flyScore);
+            this.gameSpeed = 16;
+            Laya.timer.loop(300, this, this.flyScore);
         }
         //rocket
         flyRocket() {
             this.frog.playAction(Frog.ACTIONS.jump_to_rocket);
             this.gameSpeedNormal = this.gameSpeed;
-            this.gameSpeed = 10;
-            Laya.timer.loop(200, this, this.flyScore);
+            this.gameSpeed = 16;
+            Laya.timer.loop(300, this, this.flyScore);
         }
         //飞行分数
         flyScore() {
             this.frog.getCoin(true);
             this.setScore();
-            this.coffeeTime--;
-            if (this.coffeeTime < 1) {
+            this.propTime--;
+            if (this.propTime < 1 && !this.frog.waitLand) {
                 this.frog.waitLand = true; //等落地
             }
         }
@@ -618,6 +654,61 @@ namespace game {
             Laya.timer.clear(this, this.flyScore);
             this.gameSpeed = this.gameSpeedNormal; //恢复游戏速度
             this.frog.playAction(Frog.ACTIONS.fly_to_land);
+        }
+
+        //进入任意门
+        getDoor() {
+            this.frog.visible = false;
+            this.frog.x = Math.floor(Laya.stage.width * 0.6) - 250;
+            this.frog.inDoor = true;
+            this.propTime = 10;
+            this.gameSpeedNormal = this.gameSpeed;
+            this.gameSpeed = 8//16;
+            Laya.timer.loop(300, this, this.doorScore);
+        }
+        //任意门分数
+        doorScore() {
+            this.frog.getCoin(true);
+            this.setScore();
+            this.propTime--;
+            if (this.propTime < 1 && !this.frog.waitLand) {
+                this.frog.waitLand = true; //等落地
+                if (Math.random() < 0.3) { //等死
+                    this.frog.doorDie = true;
+                }
+            }
+        }
+
+        //从门里出来
+        outDoor(item) {
+            this.frog.inDoor = false;
+            this.frog.waitLand = false;
+            this.frog.doorDie = false;
+            Laya.timer.clearAll(this);
+            item.pillar.openDoor();
+            item.pillar.on(item.pillar.EVENT_DOOR_OPEN, this, () => {
+                this.gameSpeed = this.gameSpeedNormal; //恢复游戏速度
+                this.frog.visible = true;
+                this.frog.x = item.pillar.x;
+                Laya.timer.frameLoop(1, this, this.onLoop);
+                if (item.pillar.haveCoin) {
+                    item.pillar.hideProp();
+                    this.frog.getCoin();
+                    this.setScore();
+                }
+                if (item.tag == 4) {
+                    this.frog.falling = true;
+                    let posY = this.pillarYPos;
+                    Tween.to(item.pillar, { y: posY + 100 }, 200);
+                    Tween.to(this.frog, { y: posY + 100 }, 200, null, laya.utils.Handler.create(this, () => {
+                        this.frog.falling = false;
+                    })
+                    );
+                } else if (item.tag == 3) {
+                    this.frog.playAction(Frog.ACTIONS.stand_blast);
+                }
+                console.log("end......", this.roadIndex);
+            });
         }
     }
 }

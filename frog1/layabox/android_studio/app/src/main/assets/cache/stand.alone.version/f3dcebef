@@ -1,0 +1,39 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var kelong;
+(function (kelong) {
+    var ui;
+    (function (ui) {
+        var Label = Laya.Label;
+        var Event = Laya.Event;
+        var KLabelButton = /** @class */ (function (_super) {
+            __extends(KLabelButton, _super);
+            function KLabelButton(txt) {
+                var _this = _super.call(this) || this;
+                _this.text = txt;
+                _this.font = "黑体";
+                _this.on(Event.MOUSE_OUT, _this, function () {
+                    _this.scale(1, 1);
+                });
+                _this.on(Event.MOUSE_DOWN, _this, function () {
+                    _this.scale(0.9, 0.9);
+                });
+                _this.on(Event.MOUSE_UP, _this, function () {
+                    _this.scale(1, 1);
+                });
+                return _this;
+            }
+            return KLabelButton;
+        }(Label));
+        ui.KLabelButton = KLabelButton;
+    })(ui = kelong.ui || (kelong.ui = {}));
+})(kelong || (kelong = {}));
+//# sourceMappingURL=KLabelButton.js.map
